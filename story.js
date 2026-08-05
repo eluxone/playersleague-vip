@@ -1,29 +1,12 @@
-(async () => {
+(() => {
   'use strict';
 
   const founderStyles = document.createElement('link');
   founderStyles.rel = 'stylesheet';
-  founderStyles.href = 'story-founders.css?v=20260805-photos';
+  founderStyles.href = 'story-founders.css?v=20260805-original-hq';
   document.head.appendChild(founderStyles);
 
-  const loadScript = (src) => new Promise((resolve, reject) => {
-    const script = document.createElement('script');
-    script.src = src;
-    script.onload = resolve;
-    script.onerror = reject;
-    document.head.appendChild(script);
-  });
-
-  try {
-    await loadScript('assets/founders/yamil-data-1.js?v=1');
-    await loadScript('assets/founders/yamil-data-2.js?v=1');
-    await loadScript('assets/founders/mill-data-1.js?v=1');
-    await loadScript('assets/founders/mill-data-2.js?v=1');
-  } catch (error) {
-    console.error('Founder portrait data could not be loaded', error);
-  }
-
-  const prepareFounderImage = (founder, encodedImage, fallback) => {
+  const prepareFounderImage = (founder, source) => {
     const image = document.querySelector(`[data-founder-card="${founder}"] [data-founder-image]`);
     if (!image) return;
 
@@ -37,28 +20,17 @@
       image.remove();
     };
 
+    image.loading = 'eager';
+    image.decoding = 'async';
     image.addEventListener('load', markLoaded, { once: true });
     image.addEventListener('error', markMissing, { once: true });
-    image.src = encodedImage
-      ? `data:image/webp;base64,${encodedImage}`
-      : fallback;
+    image.src = source;
 
     if (image.complete && image.naturalWidth > 0) markLoaded();
   };
 
-  prepareFounderImage(
-    'yamil',
-    window.__PLVIP_YAMIL_IMAGE,
-    'assets/founders/yamil-angura.jpg'
-  );
-  prepareFounderImage(
-    'mill',
-    window.__PLVIP_MILL_IMAGE,
-    'assets/founders/mill-sugi.jpg'
-  );
-
-  window.__PLVIP_YAMIL_IMAGE = '';
-  window.__PLVIP_MILL_IMAGE = '';
+  prepareFounderImage('yamil', 'assets/founders/yamil-angura.png?v=original-20260805');
+  prepareFounderImage('mill', 'assets/founders/mill-sugi.png?v=original-20260805');
 
   const founderStories = {
     yamil: {
