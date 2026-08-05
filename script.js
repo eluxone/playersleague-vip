@@ -101,6 +101,21 @@
   const year = document.querySelector('[data-year]');
   if (year) year.textContent = new Date().getFullYear();
 
+  document.querySelectorAll('a[href="#story"]').forEach((link) => {
+    link.href = 'story.html';
+  });
+
+  const homeStoryCopy = document.querySelector('#story .copy');
+  if (homeStoryCopy && !homeStoryCopy.querySelector('[data-full-story-link]')) {
+    const storyLink = document.createElement('a');
+    storyLink.href = 'story.html';
+    storyLink.className = 'btn ghost';
+    storyLink.dataset.fullStoryLink = '';
+    storyLink.textContent = "Read Yamil and Mill's full story";
+    storyLink.style.marginTop = '24px';
+    homeStoryCopy.appendChild(storyLink);
+  }
+
   const header = document.querySelector('.header, .site-header');
   const setHeader = () => header?.classList.toggle('scrolled', window.scrollY > 12);
   setHeader();
