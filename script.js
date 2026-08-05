@@ -1,6 +1,39 @@
 (async () => {
   'use strict';
 
+  const alignmentStyle = document.createElement('style');
+  alignmentStyle.textContent = `
+    .token-card > img {
+      position: absolute !important;
+      left: 50% !important;
+      top: 50% !important;
+      width: 62% !important;
+      height: auto !important;
+      aspect-ratio: 1 !important;
+      object-fit: contain !important;
+      object-position: center !important;
+      transform: translate(-50%, -42%) !important;
+      margin: 0 !important;
+      z-index: 2 !important;
+    }
+    .token-card::before {
+      left: 50% !important;
+      top: 50% !important;
+      right: auto !important;
+      bottom: auto !important;
+      width: 72% !important;
+      aspect-ratio: 1 !important;
+      transform: translate(-50%, -50%) !important;
+    }
+    @media (max-width: 580px) {
+      .token-card > img {
+        width: 60% !important;
+        transform: translate(-50%, -42%) !important;
+      }
+    }
+  `;
+  document.head.appendChild(alignmentStyle);
+
   const loadScript = (src) => new Promise((resolve, reject) => {
     const script = document.createElement('script');
     script.src = src;
@@ -9,11 +42,11 @@
     document.head.appendChild(script);
   });
 
-  let logoUrl = 'assets/plvip-logo.png?v=20260805-5';
+  let logoUrl = 'assets/plvip-logo.png?v=20260805-6';
   try {
     window.__PLVIP_LOGO_B64 = '';
     for (let part = 1; part <= 4; part += 1) {
-      await loadScript(`assets/plvip-logo-data-20260805-${part}.js?v=1`);
+      await loadScript(`assets/plvip-logo-data-20260805-${part}.js?v=2`);
     }
     if (window.__PLVIP_LOGO_B64.length > 19000) {
       logoUrl = `data:image/webp;base64,${window.__PLVIP_LOGO_B64}`;
