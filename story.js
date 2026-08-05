@@ -1,6 +1,11 @@
 (() => {
   'use strict';
 
+  const founderStyles = document.createElement('link');
+  founderStyles.rel = 'stylesheet';
+  founderStyles.href = 'story-founders.css';
+  document.head.appendChild(founderStyles);
+
   const founderStories = {
     yamil: {
       number: '01',
