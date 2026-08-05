@@ -1,16 +1,15 @@
-# Players League VIP — August 2026 update
+# Players League VIP
 
-Static Vercel-ready website.
+Official static website for Players League VIP and the PLVIP token on Base.
 
-## What changed
-- Founding-player registration section
-- Live supply and allocation status
-- Safer contract verification wording
-- Privacy and terms/risk pages
-- SEO sitemap, robots.txt and security headers
-
-## Registration email
-The form prepares an email to `join@playersleague.vip`. Create that mailbox or forwarding alias before publicly inviting registrations. No form data is stored by the website.
+## Official token
+- Network: Base Mainnet
+- Symbol: PLVIP
+- Total supply: 1,000,000,000
+- Contract: `0xD06Db34A4BD78f2F059646FDc45530297bE50449`
 
 ## Deployment
-Deploy the folder with Vercel CLI or connect it to a Git repository. Vercel Drop creates a new project for each upload.
+This repository is ready for automatic Vercel deployment from the `main` branch.
+
+## Registration
+The founding-player form opens the visitor's email client and prepares a message to `join@playersleague.vip`. The static site does not store form entries.
