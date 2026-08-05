@@ -1,6 +1,10 @@
 (() => {
   'use strict';
 
+  document.querySelectorAll('img[src$="plvip-logo.png"], img[src$="plvip-logo.svg"]').forEach((image) => {
+    image.src = 'assets/plvip-logo.svg?v=20260805-2';
+  });
+
   const CONTRACT_ADDRESS = '0xD06Db34A4BD78f2F059646FDc45530297bE50449';
   const BASE_CHAIN_ID = '0x2105'; // 8453
   const REGISTRATION_EMAIL = 'join@playersleague.vip';
@@ -17,13 +21,13 @@
   const year = document.querySelector('[data-year]');
   if (year) year.textContent = new Date().getFullYear();
 
-  const header = document.querySelector('.site-header');
+  const header = document.querySelector('.header');
   const setHeader = () => header?.classList.toggle('scrolled', window.scrollY > 12);
   setHeader();
   window.addEventListener('scroll', setHeader, { passive: true });
 
-  const navToggle = document.querySelector('.nav-toggle');
-  const nav = document.querySelector('#primary-nav');
+  const navToggle = document.querySelector('.menu');
+  const nav = document.querySelector('#links');
   navToggle?.addEventListener('click', () => {
     const open = nav?.classList.toggle('open');
     navToggle.setAttribute('aria-expanded', String(Boolean(open)));
@@ -87,7 +91,15 @@
       await switchToBase(ethereum);
       const added = await ethereum.request({
         method: 'wallet_watchAsset',
-        params: { type: 'ERC20', options: { address: CONTRACT_ADDRESS, symbol: 'PLVIP', decimals: 18, image: `${window.location.origin}/assets/plvip-logo.png` } }
+        params: {
+          type: 'ERC20',
+          options: {
+            address: CONTRACT_ADDRESS,
+            symbol: 'PLVIP',
+            decimals: 18,
+            image: `${window.location.origin}/assets/plvip-logo.svg?v=20260805-2`
+          }
+        }
       });
       showToast(added ? 'PLVIP added to your wallet' : 'Token request cancelled');
     } catch (error) {
