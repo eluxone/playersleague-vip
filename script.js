@@ -1,68 +1,64 @@
-(async () => {
+(() => {
   'use strict';
 
-  const alignmentStyle = document.createElement('style');
-  alignmentStyle.textContent = `
-    .token-card > img {
-      position: absolute !important;
-      left: 50% !important;
-      top: 50% !important;
-      width: 62% !important;
-      height: auto !important;
-      aspect-ratio: 1 !important;
-      object-fit: contain !important;
-      object-position: center !important;
-      transform: translate(-50%, -42%) !important;
-      margin: 0 !important;
-      z-index: 2 !important;
-    }
+  const layoutStyle = document.createElement('style');
+  layoutStyle.textContent = `
     .token-card::before {
+      content: "" !important;
+      position: absolute !important;
       left: 50% !important;
       top: 50% !important;
       right: auto !important;
       bottom: auto !important;
       width: 72% !important;
-      aspect-ratio: 1 !important;
+      height: auto !important;
+      aspect-ratio: 1 / 1 !important;
+      border-radius: 50% !important;
       transform: translate(-50%, -50%) !important;
+      background: radial-gradient(circle at 43% 36%, rgba(75,58,34,.42) 0%, rgba(22,22,27,.98) 48%, rgba(6,7,10,.99) 100%) !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 24px 60px rgba(0,0,0,.48) !important;
+      filter: none !important;
+      z-index: 1 !important;
     }
+
+    .token-card > img {
+      position: absolute !important;
+      left: 50% !important;
+      top: 50% !important;
+      width: 54% !important;
+      height: auto !important;
+      aspect-ratio: 1 / 1 !important;
+      object-fit: contain !important;
+      object-position: 50% 50% !important;
+      transform: translate(-50%, -50%) !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      image-rendering: auto !important;
+      z-index: 2 !important;
+    }
+
+    .token-card > div:last-child {
+      z-index: 3 !important;
+    }
+
     @media (max-width: 580px) {
-      .token-card > img {
-        width: 60% !important;
-        transform: translate(-50%, -42%) !important;
-      }
+      .token-card::before { width: 72% !important; }
+      .token-card > img { width: 54% !important; }
     }
   `;
-  document.head.appendChild(alignmentStyle);
+  document.head.appendChild(layoutStyle);
 
-  const loadScript = (src) => new Promise((resolve, reject) => {
-    const script = document.createElement('script');
-    script.src = src;
-    script.onload = resolve;
-    script.onerror = reject;
-    document.head.appendChild(script);
-  });
-
-  let logoUrl = 'assets/plvip-logo.png?v=20260805-6';
-  try {
-    window.__PLVIP_LOGO_B64 = '';
-    for (let part = 1; part <= 4; part += 1) {
-      await loadScript(`assets/plvip-logo-data-20260805-${part}.js?v=2`);
-    }
-    if (window.__PLVIP_LOGO_B64.length > 19000) {
-      logoUrl = `data:image/webp;base64,${window.__PLVIP_LOGO_B64}`;
-    }
-  } catch (error) {
-    console.error('PLVIP logo data could not be assembled', error);
-  }
-
-  document.querySelectorAll('img[src*="plvip-logo"], [data-plvip-logo]').forEach((image) => {
-    image.src = logoUrl;
-  });
-
+  const LOGO_PATH = 'assets/plvip-logo.png?v=20260805-8';
   const CONTRACT_ADDRESS = '0xD06Db34A4BD78f2F059646FDc45530297bE50449';
   const BASE_CHAIN_ID = '0x2105';
   const REGISTRATION_EMAIL = 'join@playersleague.vip';
   const toast = document.querySelector('[data-toast]');
+
+  document.querySelectorAll('img[src*="plvip-logo"], [data-plvip-logo]').forEach((image) => {
+    image.src = LOGO_PATH;
+  });
 
   const showToast = (message) => {
     if (!toast) return;
@@ -154,7 +150,7 @@
             address: CONTRACT_ADDRESS,
             symbol: 'PLVIP',
             decimals: 18,
-            image: logoUrl
+            image: `${window.location.origin}/assets/plvip-logo.png?v=20260805-8`
           }
         }
       });
