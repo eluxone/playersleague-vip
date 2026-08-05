@@ -1,0 +1,23 @@
+@import url('story-founders.css?v=20260805-original-hq');
+
+.founder-photo img {
+  object-fit: cover !important;
+  object-position: center top !important;
+  image-rendering: auto !important;
+  filter: none !important;
+  backface-visibility: hidden;
+}
+
+.founder-card:hover .founder-photo img {
+  transform: none !important;
+}
+
+.founder-photo.photo-loaded .founder-initials {
+  opacity: 0;
+}
+
+@media (max-width: 650px) {
+  .founder-photo img {
+    object-position: center top !important;
+  }
+}
