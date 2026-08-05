@@ -1,13 +1,39 @@
-(() => {
+(async () => {
   'use strict';
 
   const founderStyles = document.createElement('link');
   founderStyles.rel = 'stylesheet';
-  founderStyles.href = 'story-founders-hq.css?v=20260805-original-hq';
+  founderStyles.href = 'story-founders-hq.css?v=20260805-mobile-final';
   document.head.appendChild(founderStyles);
 
-  const prepareFounderImage = (founder, source) => {
-    const image = document.querySelector(`[data-founder-card="${founder}"] [data-founder-image]`);
+  const loadScript = (src) => new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = src;
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+
+  try {
+    for (let part = 1; part <= 7; part += 1) {
+      await loadScript(
+        `assets/founders/mobilefinal/yamil-${String(part).padStart(2, '0')}.js?v=2`
+      );
+    }
+
+    for (let part = 1; part <= 5; part += 1) {
+      await loadScript(
+        `assets/founders/millfinal50/mill-${String(part).padStart(2, '0')}.js?v=2`
+      );
+    }
+  } catch (error) {
+    console.error('Founder portrait data could not be loaded', error);
+  }
+
+  const prepareFounderImage = (founder, encodedImage) => {
+    const image = document.querySelector(
+      `[data-founder-card="${founder}"] [data-founder-image]`
+    );
     if (!image) return;
 
     const photo = image.closest('.founder-photo');
@@ -20,17 +46,25 @@
       image.remove();
     };
 
+    if (!encodedImage || encodedImage.length < 10000) {
+      markMissing();
+      return;
+    }
+
     image.loading = 'eager';
     image.decoding = 'async';
     image.addEventListener('load', markLoaded, { once: true });
     image.addEventListener('error', markMissing, { once: true });
-    image.src = source;
+    image.src = `data:image/avif;base64,${encodedImage}`;
 
     if (image.complete && image.naturalWidth > 0) markLoaded();
   };
 
-  prepareFounderImage('yamil', 'assets/founders/yamil-angura.png?v=original-20260805');
-  prepareFounderImage('mill', 'assets/founders/mill-sugi.png?v=original-20260805');
+  prepareFounderImage('yamil', window.__PLVIP_YAMIL_MOBILE);
+  prepareFounderImage('mill', window.__PLVIP_MILL_FINAL50);
+
+  window.__PLVIP_YAMIL_MOBILE = '';
+  window.__PLVIP_MILL_FINAL50 = '';
 
   const founderStories = {
     yamil: {
@@ -105,8 +139,11 @@
         const active = item.dataset.storyChoice === choice;
         item.classList.toggle('active', active);
         item.setAttribute('aria-selected', String(active));
-        if (item.hasAttribute('aria-pressed')) item.setAttribute('aria-pressed', String(active));
+        if (item.hasAttribute('aria-pressed')) {
+          item.setAttribute('aria-pressed', String(active));
+        }
       });
+
       document.querySelectorAll('[data-founder-card]').forEach((card) => {
         card.classList.toggle('active', card.dataset.founderCard === choice);
       });
