@@ -1,10 +1,22 @@
-@import url('story-founders.css?v=20260805-original-hq');
+@import url('story-founders.css?v=20260805-mobile-final');
+
+.founder-photo {
+  min-height: 600px !important;
+  background:
+    radial-gradient(circle at 50% 28%, rgba(214,170,69,.16), transparent 38%),
+    linear-gradient(145deg,#1b1d26,#090a0e) !important;
+}
 
 .founder-photo img {
-  object-fit: cover !important;
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
   object-position: center top !important;
   image-rendering: auto !important;
   filter: none !important;
+  transform: none !important;
   backface-visibility: hidden;
 }
 
@@ -17,7 +29,12 @@
 }
 
 @media (max-width: 650px) {
+  .founder-photo {
+    min-height: 540px !important;
+  }
+
   .founder-photo img {
+    object-fit: contain !important;
     object-position: center top !important;
   }
 }
