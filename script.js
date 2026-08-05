@@ -1,4 +1,4 @@
-(() => {
+(async () => {
   'use strict';
 
   const layoutStyle = document.createElement('style');
@@ -25,7 +25,7 @@
       position: absolute !important;
       left: 50% !important;
       top: 50% !important;
-      width: 54% !important;
+      width: 46% !important;
       height: auto !important;
       aspect-ratio: 1 / 1 !important;
       object-fit: contain !important;
@@ -39,26 +39,44 @@
       z-index: 2 !important;
     }
 
-    .token-card > div:last-child {
-      z-index: 3 !important;
-    }
+    .token-card > div:last-child { z-index: 3 !important; }
 
     @media (max-width: 580px) {
       .token-card::before { width: 72% !important; }
-      .token-card > img { width: 54% !important; }
+      .token-card > img { width: 46% !important; }
     }
   `;
   document.head.appendChild(layoutStyle);
 
-  const LOGO_PATH = 'assets/plvip-logo.png?v=20260805-8';
+  const loadScript = (src) => new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = src;
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+
+  let logoUrl = 'assets/plvip-logo.png?v=20260805-9';
+  try {
+    window.__PLVIP_LOGO_B64 = '';
+    for (let part = 1; part <= 4; part += 1) {
+      await loadScript(`assets/plvip-logo-data-20260805-${part}.js?v=4`);
+    }
+    if (window.__PLVIP_LOGO_B64.length > 19000) {
+      logoUrl = `data:image/webp;base64,${window.__PLVIP_LOGO_B64}`;
+    }
+  } catch (error) {
+    console.error('PLVIP logo data could not be assembled', error);
+  }
+
+  document.querySelectorAll('img[src*="plvip-logo"], [data-plvip-logo]').forEach((image) => {
+    image.src = logoUrl;
+  });
+
   const CONTRACT_ADDRESS = '0xD06Db34A4BD78f2F059646FDc45530297bE50449';
   const BASE_CHAIN_ID = '0x2105';
   const REGISTRATION_EMAIL = 'join@playersleague.vip';
   const toast = document.querySelector('[data-toast]');
-
-  document.querySelectorAll('img[src*="plvip-logo"], [data-plvip-logo]').forEach((image) => {
-    image.src = LOGO_PATH;
-  });
 
   const showToast = (message) => {
     if (!toast) return;
@@ -114,10 +132,7 @@
 
   const switchToBase = async (ethereum) => {
     try {
-      await ethereum.request({
-        method: 'wallet_switchEthereumChain',
-        params: [{ chainId: BASE_CHAIN_ID }]
-      });
+      await ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: BASE_CHAIN_ID }] });
     } catch (error) {
       if (error?.code !== 4902) throw error;
       await ethereum.request({
@@ -150,7 +165,7 @@
             address: CONTRACT_ADDRESS,
             symbol: 'PLVIP',
             decimals: 18,
-            image: `${window.location.origin}/assets/plvip-logo.png?v=20260805-8`
+            image: logoUrl
           }
         }
       });
@@ -161,9 +176,7 @@
     }
   };
 
-  document.querySelectorAll('[data-add-token]').forEach((button) => {
-    button.addEventListener('click', addToken);
-  });
+  document.querySelectorAll('[data-add-token]').forEach((button) => button.addEventListener('click', addToken));
 
   const form = document.querySelector('[data-join-form]');
   const status = document.querySelector('[data-form-status]');
@@ -193,10 +206,7 @@
       'Consent: Early-access contact only; no rewards or access guaranteed.'
     ].join('\n');
 
-    try {
-      await navigator.clipboard.writeText(body);
-    } catch {}
-
+    try { await navigator.clipboard.writeText(body); } catch {}
     if (status) status.textContent = 'Your registration is ready. Your email app should open now.';
     window.location.href = `mailto:${REGISTRATION_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   });
