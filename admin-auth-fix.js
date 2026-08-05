@@ -126,7 +126,6 @@
           method: 'POST',
           headers: {
             apikey: config.key,
-            Authorization: `Bearer ${config.key}`,
             'Content-Type': 'application/json',
             Accept: 'application/json'
           },
@@ -185,7 +184,6 @@
           method: 'POST',
           headers: {
             apikey: config.key,
-            Authorization: `Bearer ${config.key}`,
             'Content-Type': 'application/json',
             Accept: 'application/json'
           },
