@@ -1,12 +1,20 @@
 (() => {
   'use strict';
 
-  document.querySelectorAll('img[src$="plvip-logo.png"], img[src$="plvip-logo.svg"]').forEach((image) => {
-    image.src = 'assets/plvip-logo.svg?v=20260805-2';
+  const LOGO_URL = 'assets/plvip-logo.png?v=20260805-3';
+  document.querySelectorAll('img[src*="plvip-logo"]').forEach((image) => {
+    image.src = LOGO_URL;
+    image.addEventListener('error', () => {
+      image.removeAttribute('src');
+      image.style.backgroundImage = `url(${LOGO_URL})`;
+      image.style.backgroundSize = 'contain';
+      image.style.backgroundPosition = 'center';
+      image.style.backgroundRepeat = 'no-repeat';
+    }, { once: true });
   });
 
   const CONTRACT_ADDRESS = '0xD06Db34A4BD78f2F059646FDc45530297bE50449';
-  const BASE_CHAIN_ID = '0x2105'; // 8453
+  const BASE_CHAIN_ID = '0x2105';
   const REGISTRATION_EMAIL = 'join@playersleague.vip';
   const toast = document.querySelector('[data-toast]');
 
@@ -45,7 +53,7 @@
           observer.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.12 });
+    }, { threshold: 0.1 });
     document.querySelectorAll('.reveal').forEach((node) => observer.observe(node));
   } else {
     document.querySelectorAll('.reveal').forEach((node) => node.classList.add('visible'));
@@ -64,7 +72,10 @@
 
   const switchToBase = async (ethereum) => {
     try {
-      await ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: BASE_CHAIN_ID }] });
+      await ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: BASE_CHAIN_ID }]
+      });
     } catch (error) {
       if (error?.code !== 4902) throw error;
       await ethereum.request({
@@ -97,7 +108,7 @@
             address: CONTRACT_ADDRESS,
             symbol: 'PLVIP',
             decimals: 18,
-            image: `${window.location.origin}/assets/plvip-logo.svg?v=20260805-2`
+            image: `${window.location.origin}/assets/plvip-logo.png?v=20260805-3`
           }
         }
       });
@@ -108,16 +119,16 @@
     }
   };
 
-  document.querySelectorAll('[data-add-token]').forEach((button) => button.addEventListener('click', addToken));
+  document.querySelectorAll('[data-add-token]').forEach((button) => {
+    button.addEventListener('click', addToken);
+  });
 
   const form = document.querySelector('[data-join-form]');
   const status = document.querySelector('[data-form-status]');
   form?.addEventListener('submit', async (event) => {
     event.preventDefault();
-    const required = [...form.querySelectorAll('[required]')];
-    required.forEach((field) => field.setAttribute('aria-invalid', String(!field.checkValidity())));
     if (!form.checkValidity()) {
-      status.textContent = 'Please complete the required fields before continuing.';
+      status.textContent = 'Please complete the required fields.';
       form.reportValidity();
       return;
     }
@@ -140,11 +151,11 @@
       'Consent: Early-access contact only; no rewards or access guaranteed.'
     ].join('\n');
 
-    const mailto = `mailto:${REGISTRATION_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     try {
       await navigator.clipboard.writeText(body);
-    } catch { /* clipboard is optional */ }
-    status.textContent = 'Your registration details are ready. Your email app should open now; the details were also copied where supported.';
-    window.location.href = mailto;
+    } catch {}
+
+    status.textContent = 'Your registration is ready. Your email app should open now.';
+    window.location.href = `mailto:${REGISTRATION_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   });
 })();
