@@ -1,16 +1,29 @@
-(() => {
+(async () => {
   'use strict';
 
-  const LOGO_URL = 'assets/plvip-logo.png?v=20260805-3';
-  document.querySelectorAll('img[src*="plvip-logo"]').forEach((image) => {
-    image.src = LOGO_URL;
-    image.addEventListener('error', () => {
-      image.removeAttribute('src');
-      image.style.backgroundImage = `url(${LOGO_URL})`;
-      image.style.backgroundSize = 'contain';
-      image.style.backgroundPosition = 'center';
-      image.style.backgroundRepeat = 'no-repeat';
-    }, { once: true });
+  const loadScript = (src) => new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = src;
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+
+  let logoUrl = 'assets/plvip-logo.png?v=20260805-5';
+  try {
+    window.__PLVIP_LOGO_B64 = '';
+    for (let part = 1; part <= 4; part += 1) {
+      await loadScript(`assets/plvip-logo-data-20260805-${part}.js?v=1`);
+    }
+    if (window.__PLVIP_LOGO_B64.length > 19000) {
+      logoUrl = `data:image/webp;base64,${window.__PLVIP_LOGO_B64}`;
+    }
+  } catch (error) {
+    console.error('PLVIP logo data could not be assembled', error);
+  }
+
+  document.querySelectorAll('img[src*="plvip-logo"], [data-plvip-logo]').forEach((image) => {
+    image.src = logoUrl;
   });
 
   const CONTRACT_ADDRESS = '0xD06Db34A4BD78f2F059646FDc45530297bE50449';
@@ -29,13 +42,13 @@
   const year = document.querySelector('[data-year]');
   if (year) year.textContent = new Date().getFullYear();
 
-  const header = document.querySelector('.header');
+  const header = document.querySelector('.header, .site-header');
   const setHeader = () => header?.classList.toggle('scrolled', window.scrollY > 12);
   setHeader();
   window.addEventListener('scroll', setHeader, { passive: true });
 
-  const navToggle = document.querySelector('.menu');
-  const nav = document.querySelector('#links');
+  const navToggle = document.querySelector('.menu, .nav-toggle');
+  const nav = document.querySelector('#links, #primary-nav');
   navToggle?.addEventListener('click', () => {
     const open = nav?.classList.toggle('open');
     navToggle.setAttribute('aria-expanded', String(Boolean(open)));
@@ -108,7 +121,7 @@
             address: CONTRACT_ADDRESS,
             symbol: 'PLVIP',
             decimals: 18,
-            image: `${window.location.origin}/assets/plvip-logo.png?v=20260805-3`
+            image: logoUrl
           }
         }
       });
@@ -128,7 +141,7 @@
   form?.addEventListener('submit', async (event) => {
     event.preventDefault();
     if (!form.checkValidity()) {
-      status.textContent = 'Please complete the required fields.';
+      if (status) status.textContent = 'Please complete the required fields.';
       form.reportValidity();
       return;
     }
@@ -155,7 +168,7 @@
       await navigator.clipboard.writeText(body);
     } catch {}
 
-    status.textContent = 'Your registration is ready. Your email app should open now.';
+    if (status) status.textContent = 'Your registration is ready. Your email app should open now.';
     window.location.href = `mailto:${REGISTRATION_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   });
 })();
