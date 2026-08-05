@@ -25,6 +25,23 @@ function cleanText(value, maxLength) {
   return value.trim().slice(0, maxLength);
 }
 
+function isBrowserSafeSupabaseKey(value) {
+  const key = String(value || '').trim();
+
+  if (key.startsWith('sb_publishable_')) return true;
+  if (key.startsWith('sb_secret_')) return false;
+
+  const parts = key.split('.');
+  if (parts.length !== 3) return false;
+
+  try {
+    const payload = JSON.parse(Buffer.from(parts[1], 'base64url').toString('utf8'));
+    return payload?.role === 'anon';
+  } catch {
+    return false;
+  }
+}
+
 function getIp(request) {
   const forwarded = request.headers['x-forwarded-for'];
   if (typeof forwarded === 'string' && forwarded) {
@@ -58,6 +75,7 @@ function isRateLimited(ip) {
 function send(response, status, payload) {
   response.setHeader('Cache-Control', 'no-store, max-age=0');
   response.setHeader('Content-Type', 'application/json; charset=utf-8');
+  response.setHeader('X-Content-Type-Options', 'nosniff');
   return response.status(status).json(payload);
 }
 
@@ -84,11 +102,15 @@ export default async function handler(request, response) {
     });
   }
 
-  const body = typeof request.body === 'string'
-    ? JSON.parse(request.body || '{}')
-    : (request.body || {});
+  let body;
+  try {
+    body = typeof request.body === 'string'
+      ? JSON.parse(request.body || '{}')
+      : (request.body || {});
+  } catch {
+    return send(response, 400, { ok: false, message: 'Invalid request.' });
+  }
 
-  // Honeypot: real visitors never fill this field.
   if (cleanText(body.website, 200)) {
     return send(response, 200, { ok: true, message: 'Registration received' });
   }
@@ -131,11 +153,11 @@ export default async function handler(request, response) {
     return send(response, 400, { ok: false, message: 'Consent is required to register.' });
   }
 
-  const supabaseUrl = process.env.SUPABASE_URL;
-  const publishableKey = process.env.SUPABASE_PUBLISHABLE_KEY;
+  const supabaseUrl = String(process.env.SUPABASE_URL || '').trim();
+  const publishableKey = String(process.env.SUPABASE_PUBLISHABLE_KEY || '').trim();
 
-  if (!supabaseUrl || !publishableKey) {
-    console.error('Missing Supabase environment variables');
+  if (!supabaseUrl || !publishableKey || !isBrowserSafeSupabaseKey(publishableKey)) {
+    console.error('Missing or unsafe Supabase publishable configuration');
     return send(response, 503, {
       ok: false,
       message: 'Registration is temporarily unavailable. Please try again later.'
@@ -147,7 +169,6 @@ export default async function handler(request, response) {
       method: 'POST',
       headers: {
         apikey: publishableKey,
-        Authorization: `Bearer ${publishableKey}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
