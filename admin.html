@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#08090d">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://*.supabase.co; img-src 'self' data:; style-src 'self'; script-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <title>Administrator — Players League VIP</title>
+  <link rel="icon" href="assets/favicon-64.png">
+  <link rel="stylesheet" href="admin.css">
+  <script defer src="admin.js"></script>
+</head>
+<body>
+  <header class="admin-header">
+    <div class="admin-header-inner">
+      <a class="admin-brand" href="index.html" aria-label="Return to Players League VIP">
+        <span class="brand-mark" aria-hidden="true"><strong>PL</strong><small>VIP</small></span>
+        <span><strong>Players League</strong><small>Administrator</small></span>
+      </a>
+      <a class="back-link" href="index.html">Return to website</a>
+    </div>
+  </header>
+
+  <main class="admin-shell">
+    <section class="boot-panel panel" data-boot-panel>
+      <span class="spinner" aria-hidden="true"></span>
+      <h1>Checking secure session</h1>
+      <p>Connecting to Players League VIP administration.</p>
+    </section>
+
+    <section class="auth-layout" data-login-panel hidden>
+      <div class="auth-copy">
+        <p class="eyebrow">PRIVATE ACCESS</p>
+        <h1>Founding Player administration.</h1>
+        <p>Sign in with the administrator account created in Supabase. Access is checked against the private administrator table before registration data is loaded.</p>
+        <div class="security-list">
+          <article><span>01</span><div><strong>Authenticated session</strong><p>Your password is sent directly to Supabase Auth over HTTPS.</p></div></article>
+          <article><span>02</span><div><strong>Database authorisation</strong><p>A valid login alone is not enough; your user ID must also be an approved administrator.</p></div></article>
+          <article><span>03</span><div><strong>Row Level Security</strong><p>Registration records remain blocked for anonymous and unapproved accounts.</p></div></article>
+        </div>
+      </div>
+
+      <form class="login-card panel" data-login-form novalidate>
+        <p class="eyebrow">ADMIN LOGIN</p>
+        <h2>Sign in securely</h2>
+        <label>
+          Administrator email
+          <input name="email" type="email" autocomplete="username" maxlength="254" required placeholder="admin@example.com">
+        </label>
+        <label>
+          Password
+          <input name="password" type="password" autocomplete="current-password" minlength="8" maxlength="200" required placeholder="Your password">
+        </label>
+        <button class="primary-button" type="submit">Sign in</button>
+        <p class="form-status" data-login-status aria-live="polite"></p>
+        <p class="login-note">This page never displays or stores your password. Do not share administrator credentials.</p>
+      </form>
+    </section>
+
+    <section class="denied-panel panel" data-denied-panel hidden>
+      <p class="eyebrow">ACCESS DENIED</p>
+      <h1>This account is not authorised.</h1>
+      <p>The login was valid, but the account is not listed as a Players League VIP administrator.</p>
+      <button class="secondary-button" type="button" data-denied-sign-out>Sign out and try again</button>
+    </section>
+
+    <section class="dashboard" data-dashboard hidden>
+      <div class="dashboard-heading">
+        <div>
+          <p class="eyebrow">FOUNDING PLAYER DATABASE</p>
+          <h1>Registration dashboard</h1>
+          <p class="dashboard-subtitle">Securely review and export the founding-player list.</p>
+        </div>
+        <div class="account-box">
+          <span>Signed in as</span>
+          <strong data-admin-email>Administrator</strong>
+          <button class="text-button" type="button" data-sign-out>Sign out</button>
+        </div>
+      </div>
+
+      <div class="stat-grid" aria-label="Registration statistics">
+        <article class="stat-card"><span>Total registrations</span><strong data-stat-total>0</strong><small>Stored founding players</small></article>
+        <article class="stat-card"><span>Last 7 days</span><strong data-stat-week>0</strong><small>Recent registrations</small></article>
+        <article class="stat-card"><span>Top platform</span><strong class="stat-text" data-stat-platform>—</strong><small>Most selected platform</small></article>
+        <article class="stat-card"><span>Newest registration</span><strong class="stat-text" data-stat-newest>—</strong><small>Latest submission date</small></article>
+      </div>
+
+      <section class="records-panel panel">
+        <div class="records-toolbar">
+          <div>
+            <h2>Founding players</h2>
+            <p><span data-visible-count>0</span> records shown</p>
+          </div>
+          <div class="toolbar-actions">
+            <label class="search-field">
+              <span class="sr-only">Search registrations</span>
+              <input type="search" data-search placeholder="Search name, email, game, country…" autocomplete="off">
+            </label>
+            <button class="secondary-button" type="button" data-refresh>Refresh</button>
+            <button class="primary-button compact" type="button" data-export>Export CSV</button>
+          </div>
+        </div>
+
+        <div class="table-wrap" data-table-wrap>
+          <table>
+            <thead>
+              <tr>
+                <th>Joined</th>
+                <th>Gamer name</th>
+                <th>Email</th>
+                <th>Main game</th>
+                <th>Platform</th>
+                <th>Country</th>
+                <th>Discord / X</th>
+                <th>Build priority</th>
+              </tr>
+            </thead>
+            <tbody data-records-body></tbody>
+          </table>
+        </div>
+
+        <div class="empty-state" data-empty-state hidden>
+          <h3>No matching registrations</h3>
+          <p>Try a different search or refresh the database.</p>
+        </div>
+
+        <p class="records-status" data-records-status aria-live="polite"></p>
+      </section>
+    </section>
+  </main>
+
+  <noscript>
+    <div class="noscript">JavaScript is required for the secure administrator dashboard.</div>
+  </noscript>
+</body>
+</html>
