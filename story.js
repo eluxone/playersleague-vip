@@ -1,10 +1,64 @@
-(() => {
+(async () => {
   'use strict';
 
   const founderStyles = document.createElement('link');
   founderStyles.rel = 'stylesheet';
-  founderStyles.href = 'story-founders.css';
+  founderStyles.href = 'story-founders.css?v=20260805-photos';
   document.head.appendChild(founderStyles);
+
+  const loadScript = (src) => new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = src;
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+
+  try {
+    await loadScript('assets/founders/yamil-data-1.js?v=1');
+    await loadScript('assets/founders/yamil-data-2.js?v=1');
+    await loadScript('assets/founders/mill-data-1.js?v=1');
+    await loadScript('assets/founders/mill-data-2.js?v=1');
+  } catch (error) {
+    console.error('Founder portrait data could not be loaded', error);
+  }
+
+  const prepareFounderImage = (founder, encodedImage, fallback) => {
+    const image = document.querySelector(`[data-founder-card="${founder}"] [data-founder-image]`);
+    if (!image) return;
+
+    const photo = image.closest('.founder-photo');
+    const markLoaded = () => {
+      photo?.classList.remove('photo-missing');
+      photo?.classList.add('photo-loaded');
+    };
+    const markMissing = () => {
+      photo?.classList.add('photo-missing');
+      image.remove();
+    };
+
+    image.addEventListener('load', markLoaded, { once: true });
+    image.addEventListener('error', markMissing, { once: true });
+    image.src = encodedImage
+      ? `data:image/webp;base64,${encodedImage}`
+      : fallback;
+
+    if (image.complete && image.naturalWidth > 0) markLoaded();
+  };
+
+  prepareFounderImage(
+    'yamil',
+    window.__PLVIP_YAMIL_IMAGE,
+    'assets/founders/yamil-angura.jpg'
+  );
+  prepareFounderImage(
+    'mill',
+    window.__PLVIP_MILL_IMAGE,
+    'assets/founders/mill-sugi.jpg'
+  );
+
+  window.__PLVIP_YAMIL_IMAGE = '';
+  window.__PLVIP_MILL_IMAGE = '';
 
   const founderStories = {
     yamil: {
@@ -68,14 +122,6 @@
     void container.offsetWidth;
     container.classList.add('panel-changing');
   };
-
-  document.querySelectorAll('[data-founder-image]').forEach((image) => {
-    image.addEventListener('load', () => image.closest('.founder-photo')?.classList.add('photo-loaded'));
-    image.addEventListener('error', () => {
-      image.closest('.founder-photo')?.classList.add('photo-missing');
-      image.remove();
-    });
-  });
 
   document.querySelectorAll('[data-story-choice]').forEach((button) => {
     button.addEventListener('click', () => {
