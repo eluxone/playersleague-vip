@@ -40,6 +40,19 @@
     }
 
     .token-card > div:last-child { z-index: 3 !important; }
+    .form-status[data-state="success"] { color: #62e6a7 !important; }
+    .form-status[data-state="error"] { color: #ff9a9a !important; }
+    .form button[disabled] { cursor: wait; opacity: .78; transform: none !important; }
+    .registration-honeypot {
+      position: absolute !important;
+      left: -10000px !important;
+      top: auto !important;
+      width: 1px !important;
+      height: 1px !important;
+      overflow: hidden !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
 
     @media (max-width: 580px) {
       .token-card::before { width: 72% !important; }
@@ -75,7 +88,6 @@
 
   const CONTRACT_ADDRESS = '0xD06Db34A4BD78f2F059646FDc45530297bE50449';
   const BASE_CHAIN_ID = '0x2105';
-  const REGISTRATION_EMAIL = 'join@playersleague.vip';
   const toast = document.querySelector('[data-toast]');
 
   const showToast = (message) => {
@@ -180,34 +192,100 @@
 
   const form = document.querySelector('[data-join-form]');
   const status = document.querySelector('[data-form-status]');
+  const submitButton = form?.querySelector('button[type="submit"]');
+  const note = form?.querySelector('.note');
+
+  if (form) {
+    const honeypot = document.createElement('label');
+    honeypot.className = 'registration-honeypot';
+    honeypot.setAttribute('aria-hidden', 'true');
+    honeypot.innerHTML = 'Website<input name="website" type="text" tabindex="-1" autocomplete="off">';
+    form.appendChild(honeypot);
+
+    const startedAt = document.createElement('input');
+    startedAt.type = 'hidden';
+    startedAt.name = 'startedAt';
+    startedAt.value = String(Date.now());
+    form.appendChild(startedAt);
+
+    if (submitButton) submitButton.textContent = 'Join the founding player list';
+    if (note) {
+      note.innerHTML = 'Your registration is submitted securely. No wallet or token purchase is required. See our <a href="privacy.html">Privacy Policy</a>.';
+    }
+  }
+
   form?.addEventListener('submit', async (event) => {
     event.preventDefault();
+
+    if (status) {
+      status.textContent = '';
+      status.removeAttribute('data-state');
+    }
+
     if (!form.checkValidity()) {
-      if (status) status.textContent = 'Please complete the required fields.';
+      if (status) {
+        status.textContent = 'Please complete all required fields.';
+        status.dataset.state = 'error';
+      }
       form.reportValidity();
       return;
     }
 
-    const data = new FormData(form);
-    const subject = `Players League VIP founding registration — ${data.get('gamerName')}`;
-    const body = [
-      'Players League VIP — Founding Player Registration',
-      '',
-      `Gamer name: ${data.get('gamerName')}`,
-      `Email: ${data.get('email')}`,
-      `Main game: ${data.get('mainGame')}`,
-      `Platform: ${data.get('platform')}`,
-      `Country: ${data.get('country')}`,
-      `Discord/X: ${data.get('social') || 'Not provided'}`,
-      '',
-      'Build priority:',
-      data.get('priority') || 'Not provided',
-      '',
-      'Consent: Early-access contact only; no rewards or access guaranteed.'
-    ].join('\n');
+    const originalButtonText = submitButton?.textContent || 'Join the founding player list';
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.textContent = 'Submitting securely…';
+    }
 
-    try { await navigator.clipboard.writeText(body); } catch {}
-    if (status) status.textContent = 'Your registration is ready. Your email app should open now.';
-    window.location.href = `mailto:${REGISTRATION_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    const data = new FormData(form);
+    const payload = {
+      gamerName: data.get('gamerName'),
+      email: data.get('email'),
+      mainGame: data.get('mainGame'),
+      platform: data.get('platform'),
+      country: data.get('country'),
+      social: data.get('social'),
+      priority: data.get('priority'),
+      consent: data.get('consent') === 'on',
+      website: data.get('website'),
+      startedAt: Number(data.get('startedAt'))
+    };
+
+    try {
+      const result = await fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const responseBody = await result.json().catch(() => ({}));
+      if (!result.ok || responseBody.ok !== true) {
+        throw new Error(responseBody.message || 'Registration could not be completed.');
+      }
+
+      form.reset();
+      const startField = form.elements.namedItem('startedAt');
+      if (startField) startField.value = String(Date.now());
+
+      if (status) {
+        status.textContent = responseBody.message || 'Welcome to the founding player list.';
+        status.dataset.state = 'success';
+      }
+      if (submitButton) {
+        submitButton.textContent = 'Registration received ✓';
+        submitButton.disabled = true;
+      }
+      showToast('Founding Player registration received');
+    } catch (error) {
+      console.error(error);
+      if (status) {
+        status.textContent = error.message || 'Registration could not be completed. Please try again.';
+        status.dataset.state = 'error';
+      }
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = originalButtonText;
+      }
+    }
   });
 })();
