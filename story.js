@@ -3,7 +3,7 @@
 
   const founderStyles = document.createElement('link');
   founderStyles.rel = 'stylesheet';
-  founderStyles.href = 'story-founders.css?v=20260805-original-hq';
+  founderStyles.href = 'story-founders-hq.css?v=20260805-original-hq';
   document.head.appendChild(founderStyles);
 
   const prepareFounderImage = (founder, source) => {
