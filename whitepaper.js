@@ -1,6 +1,11 @@
 (() => {
   'use strict';
 
+  const mobileStyles = document.createElement('link');
+  mobileStyles.rel = 'stylesheet';
+  mobileStyles.href = 'whitepaper-mobile.css?v=20260806-mobile-rebuild';
+  document.head.appendChild(mobileStyles);
+
   const progress = document.querySelector('[data-reading-progress]');
   const tocLinks = [...document.querySelectorAll('.wp-toc a[href^="#"]')];
   const chapters = tocLinks
