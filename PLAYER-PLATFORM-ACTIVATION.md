@@ -1,13 +1,14 @@
 # Players League VIP — Founding Player Platform Activation
 
-The website code is deployed through Vercel, but the player database must be activated once in the existing Supabase project.
+The website code deploys through Vercel, but the player database must be activated once in the existing Supabase project before accounts can create profiles.
 
 ## 1. Apply the database migrations
 
-Open Supabase Dashboard → SQL Editor and run these files in order:
+Open Supabase Dashboard → SQL Editor and run these files in this exact order:
 
 1. `supabase/migrations/20260806090000_founding_player_platform.sql`
 2. `supabase/migrations/20260806091000_player_score_function_fixes.sql`
+3. `supabase/migrations/20260806092000_player_admin_content_tools.sql`
 
 The migrations create:
 
@@ -17,7 +18,8 @@ The migrations create:
 - a non-monetary points ledger
 - public player-directory, public-profile and leaderboard functions
 - row-level security policies
-- administrator moderation functions
+- administrator profile and submission moderation
+- administrator challenge, announcement, badge and points controls
 - the first challenge: **The Game That Shaped Me**
 
 ## 2. Confirm Supabase Authentication settings
@@ -43,16 +45,22 @@ Never expose a Supabase secret or service-role key in browser configuration.
 
 ## 4. Administrator access
 
-The player moderation page is `/platform-admin`.
+The platform administration page is `/platform-admin`.
 
 It uses the existing `current_user_is_admin()` database function and administrator records already used by `/admin`.
 
-Administrator capabilities in the first beta:
+Administrator capabilities in the beta:
 
-- approve or suspend public player profiles
+- approve, reject or suspend public player profiles
 - approve or reject challenge submissions
+- create, edit, publish, close or archive challenges
+- publish and archive player-dashboard announcements
+- award badges with an administrator note
+- apply positive or negative non-monetary point adjustments
 - award challenge points automatically when a submission is approved
 - award the First Challenge badge automatically
+
+The existing `/admin` page continues to review and export early-access registration records.
 
 ## 5. Public and private routes
 
@@ -69,8 +77,9 @@ Private player routes:
 - `/onboarding`
 - `/dashboard`
 
-Private administrator route:
+Private administrator routes:
 
+- `/admin`
 - `/platform-admin`
 
 ## 6. Important product rules
@@ -80,6 +89,7 @@ Private administrator route:
 - Public profiles remain hidden until an administrator approves them.
 - Players may disable public visibility at any time.
 - No private keys, recovery phrases, passwords or payment details are requested.
+- Challenge responses must not contain private personal information.
 
 ## 7. Production acceptance test
 
@@ -92,4 +102,7 @@ After migration and deployment:
 5. Confirm the profile appears at `/players`, `/leaderboard` and `/player/{username}`.
 6. Submit the first challenge.
 7. Approve the challenge as administrator.
-8. Confirm the points and First Challenge badge appear in the player dashboard and public profile.
+8. Confirm the challenge points and First Challenge badge appear in the dashboard and public profile.
+9. Create a test challenge, then keep it draft or archive it after testing.
+10. Publish a test announcement and confirm it appears in the player dashboard.
+11. Award a test badge and point adjustment, then verify the leaderboard recalculates correctly.
