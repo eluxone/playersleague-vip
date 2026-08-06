@@ -4,23 +4,138 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#08090d">
-  <meta name="description" content="Verify the Players League VIP token contract, supply and Base network status, and review current trading, liquidity, allocation and risk disclosures.">
+
+  <meta
+    name="description"
+    content="Verify the Players League VIP token contract, supply and Base network status, and review current trading, liquidity, allocation and risk disclosures."
+  >
+
   <meta property="og:title" content="Transparency Hub — Players League VIP">
-  <meta property="og:description" content="Live Base contract verification and clear PLVIP project-status disclosures.">
+  <meta
+    property="og:description"
+    content="Live Base contract verification and clear PLVIP project-status disclosures."
+  >
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://www.playersleague.vip/transparency.html">
-  <meta property="og:image" content="https://www.playersleague.vip/assets/plvip-logo.png">
+  <meta property="og:url" content="https://www.playersleague.vip/transparency">
+  <meta
+    property="og:image"
+    content="https://www.playersleague.vip/assets/plvip-logo.png"
+  >
   <meta property="og:site_name" content="Players League VIP">
+
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="canonical" href="https://www.playersleague.vip/transparency.html">
+
+  <link rel="canonical" href="https://www.playersleague.vip/transparency">
   <link rel="icon" href="assets/favicon-64.png">
   <link rel="apple-touch-icon" href="assets/plvip-logo.png">
+
   <link rel="stylesheet" href="styles.css?v=20260806">
-  <link rel="stylesheet" href="transparency.css?v=20260806-1">
+  <link rel="stylesheet" href="transparency.css?v=20260806-3">
+
+  <!-- Transparency card logo correction -->
+  <style>
+    /*
+      The original PNG includes transparent space around the emblem.
+      This circular frame clips that space and enlarges the visible coin.
+    */
+
+    .trust-emblem {
+      justify-content: center;
+    }
+
+    .trust-emblem::before {
+      display: none;
+    }
+
+    .trust-emblem-mark {
+      position: relative;
+      z-index: 1;
+
+      width: 310px;
+      height: 310px;
+      flex: 0 0 310px;
+
+      display: grid;
+      place-items: center;
+
+      margin: 0 auto 20px;
+      overflow: hidden;
+
+      border: 1px solid rgba(77, 232, 255, 0.34);
+      border-radius: 50%;
+
+      background:
+        radial-gradient(
+          circle at 50% 42%,
+          rgba(77, 232, 255, 0.12),
+          rgba(5, 8, 15, 0.94) 68%
+        );
+
+      box-shadow:
+        0 0 0 32px rgba(164, 109, 255, 0.055),
+        0 0 0 64px rgba(77, 232, 255, 0.035),
+        inset 0 0 45px rgba(77, 232, 255, 0.06);
+    }
+
+    .trust-emblem .trust-emblem-mark img {
+      position: relative;
+      z-index: 2;
+
+      display: block;
+      width: 100%;
+      max-width: none;
+      height: auto;
+
+      margin: 0;
+      transform: scale(1.55);
+      transform-origin: center;
+
+      object-fit: contain;
+      filter:
+        drop-shadow(0 20px 32px rgba(0, 0, 0, 0.72))
+        drop-shadow(0 0 14px rgba(255, 213, 106, 0.12));
+    }
+
+    .trust-emblem > span {
+      margin-top: 16px;
+    }
+
+    @media (max-width: 680px) {
+      .trust-emblem-mark {
+        width: 230px;
+        height: 230px;
+        flex-basis: 230px;
+
+        margin-bottom: 16px;
+
+        box-shadow:
+          0 0 0 22px rgba(164, 109, 255, 0.055),
+          0 0 0 44px rgba(77, 232, 255, 0.035),
+          inset 0 0 34px rgba(77, 232, 255, 0.06);
+      }
+
+      .trust-emblem .trust-emblem-mark img {
+        transform: scale(1.55);
+      }
+
+      .trust-emblem > span {
+        margin-top: 12px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .trust-emblem-mark {
+        animation: none;
+      }
+    }
+  </style>
+
   <script defer src="script.js?v=20260806"></script>
-  <script defer src="transparency.js?v=20260806-1"></script>
+  <script defer src="transparency.js?v=20260806-3"></script>
+
   <title>Transparency Hub — Players League VIP</title>
 </head>
+
 <body>
   <a class="skip" href="#main">Skip to content</a>
 
@@ -28,16 +143,34 @@
     <div class="shell nav">
       <a class="brand" href="index.html" aria-label="Players League VIP home">
         <img src="assets/plvip-logo.png" alt="PLVIP logo">
-        <span><strong>Players League</strong><small>VIP</small></span>
+
+        <span>
+          <strong>Players League</strong>
+          <small>VIP</small>
+        </span>
       </a>
-      <button class="menu" aria-expanded="false" aria-controls="links" aria-label="Open menu"><span></span><span></span><span></span></button>
+
+      <button
+        class="menu"
+        aria-expanded="false"
+        aria-controls="links"
+        aria-label="Open menu"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
       <nav id="links">
         <a href="index.html">Home</a>
         <a href="story.html">Our Story</a>
         <a href="whitepaper.html">White Paper</a>
         <a href="transparency.html" aria-current="page">Transparency</a>
         <a href="index.html#join">Join</a>
-        <button class="btn small outline" data-add-token>Add PLVIP</button>
+
+        <button class="btn small outline" type="button" data-add-token>
+          Add PLVIP
+        </button>
       </nav>
     </div>
   </header>
@@ -45,23 +178,71 @@
   <main id="main" class="trust-main">
     <section class="trust-hero">
       <div class="trust-grid" aria-hidden="true"></div>
+
       <div class="shell trust-hero-grid">
         <div class="reveal">
           <p class="eyebrow">PLVIP TRANSPARENCY HUB</p>
-          <h1>Verify first.<br><em>Trust facts.</em></h1>
-          <p class="lead">This page separates what exists on-chain today from what is still planned. It checks the official PLVIP contract directly against Base and clearly labels anything that is not yet active.</p>
+
+          <h1>
+            Verify first.<br>
+            <em>Trust facts.</em>
+          </h1>
+
+          <p class="lead">
+            This page separates what exists on-chain today from what is still
+            planned. It checks the official PLVIP contract directly against Base
+            and clearly labels anything that is not yet active.
+          </p>
+
           <div class="actions">
-            <button class="btn primary" type="button" data-refresh-status>Refresh live verification</button>
-            <a class="btn ghost" href="https://basescan.org/token/0xD06Db34A4BD78f2F059646FDc45530297bE50449" target="_blank" rel="noopener noreferrer">Open BaseScan ↗</a>
+            <button
+              class="btn primary"
+              type="button"
+              data-refresh-status
+            >
+              Refresh live verification
+            </button>
+
+            <a
+              class="btn ghost"
+              href="https://basescan.org/token/0xD06Db34A4BD78f2F059646FDc45530297bE50449"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Open BaseScan ↗
+            </a>
           </div>
-          <p class="trust-checkline" data-status-message aria-live="polite"><i></i>Preparing live Base verification…</p>
+
+          <p
+            class="trust-checkline"
+            data-status-message
+            aria-live="polite"
+          >
+            <i aria-hidden="true"></i>
+            Preparing live Base verification…
+          </p>
         </div>
 
-        <aside class="trust-emblem reveal" aria-label="Official PLVIP contract">
-          <img src="assets/plvip-logo.png" alt="Players League VIP emblem">
+        <aside
+          class="trust-emblem reveal"
+          aria-label="Official PLVIP contract"
+        >
+          <div class="trust-emblem-mark">
+            <img
+              src="assets/plvip-logo.png?v=20260806-card-centred"
+              alt="Players League VIP gold emblem"
+            >
+          </div>
+
           <span>OFFICIAL BASE CONTRACT</span>
-          <code>0xD06Db34A4BD78f2F059646FDc45530297bE50449</code>
-          <button type="button" data-copy-address>Copy contract</button>
+
+          <code>
+            0xD06Db34A4BD78f2F059646FDc45530297bE50449
+          </code>
+
+          <button type="button" data-copy-address>
+            Copy contract
+          </button>
         </aside>
       </div>
     </section>
@@ -69,28 +250,107 @@
     <section class="trust-live section" aria-labelledby="live-heading">
       <div class="shell">
         <div class="trust-title reveal">
-          <div><p class="eyebrow">LIVE ON-CHAIN CHECK</p><h2 id="live-heading">What Base reports now.</h2></div>
-          <p>Values below are read from the official contract through a server-side Base RPC request. A failed live check never changes the published contract address.</p>
+          <div>
+            <p class="eyebrow">LIVE ON-CHAIN CHECK</p>
+            <h2 id="live-heading">What Base reports now.</h2>
+          </div>
+
+          <p>
+            Values below are read from the official contract through a
+            server-side Base RPC request. A failed live check never changes the
+            published contract address.
+          </p>
         </div>
 
-        <div class="trust-status-grid" data-live-panel aria-busy="true">
-          <article class="reveal"><span>CONTRACT CODE</span><strong data-contract-state>Checking…</strong><small data-contract-detail>Waiting for Base</small></article>
-          <article class="reveal"><span>TOKEN IDENTITY</span><strong data-token-symbol>PLVIP</strong><small data-token-name>Players League VIP</small></article>
-          <article class="reveal"><span>TOTAL SUPPLY</span><strong data-total-supply>Checking…</strong><small data-decimals>18 decimals</small></article>
-          <article class="reveal"><span>BASE NETWORK</span><strong data-chain-id>Chain 8453</strong><small data-latest-block>Latest block pending</small></article>
+        <div
+          class="trust-status-grid"
+          data-live-panel
+          aria-busy="true"
+        >
+          <article class="reveal">
+            <span>CONTRACT CODE</span>
+            <strong data-contract-state>Checking…</strong>
+            <small data-contract-detail>Waiting for Base</small>
+          </article>
+
+          <article class="reveal">
+            <span>TOKEN IDENTITY</span>
+            <strong data-token-symbol>PLVIP</strong>
+            <small data-token-name>Players League VIP</small>
+          </article>
+
+          <article class="reveal">
+            <span>TOTAL SUPPLY</span>
+            <strong data-total-supply>Checking…</strong>
+            <small data-decimals>18 decimals</small>
+          </article>
+
+          <article class="reveal">
+            <span>BASE NETWORK</span>
+            <strong data-chain-id>Chain 8453</strong>
+            <small data-latest-block>Latest block pending</small>
+          </article>
         </div>
-        <p class="trust-timestamp">Last live check: <time data-checked-at>Not checked yet</time></p>
+
+        <p class="trust-timestamp">
+          Last live check:
+          <time data-checked-at>Not checked yet</time>
+        </p>
       </div>
     </section>
 
     <section class="section dark" aria-labelledby="facts-heading">
       <div class="shell">
-        <div class="center reveal"><p class="eyebrow">CURRENT PROJECT FACTS</p><h2 id="facts-heading">Clear status, without hype.</h2><p class="muted">These statements describe the project status published by Players League VIP.</p></div>
+        <div class="center reveal">
+          <p class="eyebrow">CURRENT PROJECT FACTS</p>
+          <h2 id="facts-heading">Clear status, without hype.</h2>
+
+          <p class="muted">
+            These statements describe the project status published by Players
+            League VIP.
+          </p>
+        </div>
+
         <div class="trust-facts">
-          <article class="reveal"><b class="fact-live">LIVE</b><h3>Token contract deployed</h3><p>PLVIP exists as an ERC-20 contract on Base. The official address is shown consistently across this site.</p></article>
-          <article class="reveal"><b class="fact-pending">NOT ACTIVE</b><h3>Official public trading</h3><p>No official public trading launch or approved liquidity pool is announced on this website.</p></article>
-          <article class="reveal"><b class="fact-pending">PENDING</b><h3>Allocation publication</h3><p>Final community, treasury, liquidity and team allocations have not yet been published.</p></article>
-          <article class="reveal"><b class="fact-risk">NO GUARANTEE</b><h3>Price or future value</h3><p>No profit, price increase, resale market, exchange listing, utility or future demand is promised.</p></article>
+          <article class="reveal">
+            <b class="fact-live">LIVE</b>
+            <h3>Token contract deployed</h3>
+
+            <p>
+              PLVIP exists as an ERC-20 contract on Base. The official address
+              is shown consistently across this website.
+            </p>
+          </article>
+
+          <article class="reveal">
+            <b class="fact-pending">NOT ACTIVE</b>
+            <h3>Official public trading</h3>
+
+            <p>
+              No official public trading launch or approved liquidity pool is
+              announced on this website.
+            </p>
+          </article>
+
+          <article class="reveal">
+            <b class="fact-pending">PENDING</b>
+            <h3>Allocation publication</h3>
+
+            <p>
+              Final community, treasury, liquidity and team allocations have
+              not yet been published.
+            </p>
+          </article>
+
+          <article class="reveal">
+            <b class="fact-risk">NO GUARANTEE</b>
+            <h3>Price or future value</h3>
+
+            <p>
+              No profit, price increase, resale market, exchange listing,
+              utility or future demand is promised.
+            </p>
+          </article>
         </div>
       </div>
     </section>
@@ -99,25 +359,97 @@
       <div class="shell trust-verify-grid">
         <div class="reveal">
           <p class="eyebrow">VERIFY IT YOURSELF</p>
-          <h2 id="verify-heading">Three checks before believing any PLVIP claim.</h2>
-          <p class="muted">Verification does not require buying a token, connecting a wallet or signing a transaction.</p>
+
+          <h2 id="verify-heading">
+            Three checks before believing any PLVIP claim.
+          </h2>
+
+          <p class="muted">
+            Verification does not require buying a token, connecting a wallet or
+            signing a transaction.
+          </p>
         </div>
+
         <ol class="trust-steps reveal">
-          <li><span>01</span><div><h3>Match the contract</h3><p>Confirm every link uses <code>0xD06D…0449</code>. A different address is not the official PLVIP contract.</p></div></li>
-          <li><span>02</span><div><h3>Read the current status</h3><p>Check whether trading, liquidity, allocations or features are labelled active, planned or pending.</p></div></li>
-          <li><span>03</span><div><h3>Reject pressure</h3><p>Players League VIP will never ask for a recovery phrase or private key. Do not trust messages promising guaranteed returns.</p></div></li>
+          <li>
+            <span>01</span>
+
+            <div>
+              <h3>Match the contract</h3>
+
+              <p>
+                Confirm every link uses
+                <code>0xD06D…0449</code>.
+                A different address is not the official PLVIP contract.
+              </p>
+            </div>
+          </li>
+
+          <li>
+            <span>02</span>
+
+            <div>
+              <h3>Read the current status</h3>
+
+              <p>
+                Check whether trading, liquidity, allocations or features are
+                labelled active, planned or pending.
+              </p>
+            </div>
+          </li>
+
+          <li>
+            <span>03</span>
+
+            <div>
+              <h3>Reject pressure</h3>
+
+              <p>
+                Players League VIP will never ask for a recovery phrase or
+                private key. Do not trust messages promising guaranteed returns.
+              </p>
+            </div>
+          </li>
         </ol>
       </div>
     </section>
 
     <section class="section dark" aria-labelledby="documents-heading">
       <div class="shell">
-        <div class="center reveal"><p class="eyebrow">OFFICIAL DOCUMENTS</p><h2 id="documents-heading">Follow the published record.</h2></div>
+        <div class="center reveal">
+          <p class="eyebrow">OFFICIAL DOCUMENTS</p>
+          <h2 id="documents-heading">Follow the published record.</h2>
+        </div>
+
         <div class="trust-links">
-          <a class="reveal" href="whitepaper.html"><span>PROJECT DIRECTION</span><strong>Read the White Paper</strong><i>→</i></a>
-          <a class="reveal" href="terms.html"><span>LEGAL AND RISK</span><strong>Read Terms &amp; Risk</strong><i>→</i></a>
-          <a class="reveal" href="privacy.html"><span>PERSONAL DATA</span><strong>Read the Privacy Notice</strong><i>→</i></a>
-          <a class="reveal" href="https://basescan.org/token/0xD06Db34A4BD78f2F059646FDc45530297bE50449" target="_blank" rel="noopener noreferrer"><span>ON-CHAIN EXPLORER</span><strong>Verify on BaseScan</strong><i>↗</i></a>
+          <a class="reveal" href="whitepaper.html">
+            <span>PROJECT DIRECTION</span>
+            <strong>Read the White Paper</strong>
+            <i>→</i>
+          </a>
+
+          <a class="reveal" href="terms.html">
+            <span>LEGAL AND RISK</span>
+            <strong>Read Terms &amp; Risk</strong>
+            <i>→</i>
+          </a>
+
+          <a class="reveal" href="privacy.html">
+            <span>PERSONAL DATA</span>
+            <strong>Read the Privacy Notice</strong>
+            <i>→</i>
+          </a>
+
+          <a
+            class="reveal"
+            href="https://basescan.org/token/0xD06Db34A4BD78f2F059646FDc45530297bE50449"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span>ON-CHAIN EXPLORER</span>
+            <strong>Verify on BaseScan</strong>
+            <i>↗</i>
+          </a>
         </div>
       </div>
     </section>
@@ -125,12 +457,43 @@
 
   <footer>
     <div class="shell footer">
-      <div class="brand"><img src="assets/plvip-logo.png" alt=""><span><strong>Players League</strong><small>VIP</small></span></div>
+      <div class="brand">
+        <img src="assets/plvip-logo.png" alt="">
+
+        <span>
+          <strong>Players League</strong>
+          <small>VIP</small>
+        </span>
+      </div>
+
       <p>Play. Compete. Rise.</p>
-      <nav><a href="whitepaper.html">White Paper</a><a href="transparency.html">Transparency</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms &amp; risk</a><a href="https://basescan.org/token/0xD06Db34A4BD78f2F059646FDc45530297bE50449" target="_blank" rel="noopener noreferrer">BaseScan</a></nav>
-      <small>© <span data-year></span> Players League VIP.</small>
+
+      <nav>
+        <a href="whitepaper.html">White Paper</a>
+        <a href="transparency.html">Transparency</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms &amp; risk</a>
+
+        <a
+          href="https://basescan.org/token/0xD06Db34A4BD78f2F059646FDc45530297bE50449"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          BaseScan
+        </a>
+      </nav>
+
+      <small>
+        © <span data-year></span> Players League VIP.
+      </small>
     </div>
   </footer>
-  <div class="toast" data-toast role="status" aria-live="polite"></div>
+
+  <div
+    class="toast"
+    data-toast
+    role="status"
+    aria-live="polite"
+  ></div>
 </body>
 </html>
