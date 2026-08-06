@@ -125,6 +125,12 @@
     primaryNav.insertBefore(whitePaperLink, tokenButton || null);
   }
 
+  const isWhitePaperPage = /(^|\/)whitepaper\.html$/.test(window.location.pathname);
+  primaryNav?.querySelectorAll('a[href="whitepaper.html"]').forEach((link) => {
+    if (isWhitePaperPage) link.setAttribute('aria-current', 'page');
+    else link.removeAttribute('aria-current');
+  });
+
   document.querySelectorAll('footer nav').forEach((footerNav) => {
     if (footerNav.querySelector('a[href="whitepaper.html"]')) return;
     const whitePaperLink = document.createElement('a');
