@@ -1,0 +1,109 @@
+/* Mobile-first refinement for the PLVIP White Paper */
+@media (max-width: 850px) {
+  .wp-main { overflow: clip; }
+  .wp-hero { padding: 118px 0 54px; }
+  .wp-hero-grid { gap: 34px; }
+  .wp-hero h1 { font-size: clamp(48px, 12vw, 72px); line-height: .94; letter-spacing: -.055em; }
+  .wp-hero .lead { font-size: 17px; line-height: 1.65; }
+  .wp-hero .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .wp-hero .actions .btn { width: 100%; min-height: 48px; padding-inline: 14px; text-align: center; }
+  .wp-version { line-height: 1.5; }
+
+  .wp-status-card { width: 100%; max-width: none; padding: 24px; border-radius: 24px; }
+  .wp-status-card dl div { align-items: center; }
+  .wp-status-card dt, .wp-status-card dd { font-size: 14px; }
+
+  .wp-body { padding: 38px 0 88px; }
+  .wp-layout { gap: 42px; }
+  .wp-toc { margin-inline: calc(var(--shell-pad, 0px) * -1); padding: 0 0 18px; }
+  .wp-toc > p { padding-inline: 2px; margin-bottom: 12px; }
+  .wp-toc nav { scroll-snap-type: x proximity; overscroll-behavior-inline: contain; }
+  .wp-toc a { scroll-snap-align: start; min-height: 44px; display: inline-flex; align-items: center; white-space: nowrap; }
+
+  .wp-chapter { padding-bottom: 68px; margin-bottom: 68px; }
+  .wp-chapter-no { top: -2px; right: -2px; font-size: 72px; opacity: .8; }
+  .wp-chapter h2 { max-width: 88%; font-size: clamp(38px, 8vw, 58px); line-height: 1.02; margin-bottom: 24px; }
+  .wp-chapter > p:not(.eyebrow):not(.wp-chapter-no):not(.wp-note):not(.wp-last-updated) { max-width: 70ch; line-height: 1.65; }
+  .wp-opening { line-height: 1.6 !important; }
+
+  .wp-principles, .wp-columns, .wp-token-grid, .wp-utility-grid, .wp-roadmap, .wp-governance { gap: 14px; margin-top: 28px; }
+  .wp-principles article, .wp-columns > div, .wp-utility-grid article, .wp-token-grid article, .wp-roadmap article, .wp-governance > div { border-radius: 18px; }
+  .wp-principles h3, .wp-columns h3, .wp-utility-grid h3 { margin-top: 14px; }
+
+  blockquote { margin: 32px 0; padding: 24px 24px 24px 28px; font-size: clamp(24px, 5vw, 34px); }
+  .wp-vision-switcher { margin-top: 30px; }
+  .wp-vision-switcher button { min-height: 52px; padding: 10px 12px; }
+  .wp-vision-panel { padding: 28px; }
+
+  .wp-stack { margin-top: 28px; }
+  .wp-stack article { grid-template-columns: 48px minmax(0,1fr); gap: 14px; padding: 20px; }
+  .wp-stack article > b { grid-column: 2; justify-self: start; }
+
+  .wp-contract { overflow: hidden; }
+  .wp-contract code { line-height: 1.5; word-break: break-all; }
+  .wp-contract button { width: 100%; }
+  .wp-state-table > div { align-items: center; }
+
+  .wp-checklist > div { padding: 16px; }
+  .wp-risk { padding: 34px 28px !important; }
+}
+
+@media (max-width: 620px) {
+  .wp-hero { padding: 108px 0 46px; }
+  .wp-hero h1 { font-size: clamp(44px, 13vw, 58px); }
+  .wp-hero .actions { grid-template-columns: 1fr; }
+  .wp-hero .actions .btn { min-height: 50px; }
+
+  .wp-status-card { padding: 20px; border-radius: 20px; }
+  .wp-status-head { gap: 12px; padding-bottom: 18px; }
+  .wp-status-head strong { font-size: 19px; }
+  .wp-status-card dl div { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 12px; padding: 12px 0; }
+  .wp-status-card dd { max-width: 165px; overflow-wrap: anywhere; }
+
+  .wp-body { padding-top: 28px; }
+  .wp-toc { position: sticky; top: 72px; z-index: 20; margin-inline: -18px; padding: 10px 18px 12px; background: rgba(8,9,13,.94); backdrop-filter: blur(16px); border-block: 1px solid var(--line); }
+  .wp-toc > p { display: none; }
+  .wp-toc a { font-size: 12px; padding: 9px 12px; background: #101217; }
+
+  .wp-chapter { padding-bottom: 58px; margin-bottom: 58px; scroll-margin-top: 142px; }
+  .wp-chapter-no { position: static; display: inline-block; margin: 0 0 8px; font-size: 38px; color: rgba(214,170,69,.24); }
+  .wp-chapter h2 { max-width: none; font-size: clamp(34px, 10vw, 46px); margin-bottom: 20px; }
+  .wp-chapter > p:not(.eyebrow):not(.wp-chapter-no):not(.wp-note):not(.wp-last-updated) { font-size: 16px; line-height: 1.65; }
+  .wp-opening { font-size: 17px !important; }
+
+  .wp-principles, .wp-columns, .wp-token-grid, .wp-utility-grid, .wp-roadmap, .wp-governance { grid-template-columns: 1fr; }
+  .wp-principles article, .wp-columns > div, .wp-utility-grid article { padding: 20px; }
+  .wp-principles span { margin-bottom: 0; }
+
+  blockquote { padding: 20px 20px 20px 24px; border-left-width: 3px; border-radius: 0 16px 16px 0; }
+  .wp-vision-switcher > div:first-child { display: flex; overflow-x: auto; }
+  .wp-vision-switcher button { flex: 1 0 120px; border-right: 1px solid var(--line); border-bottom: 0; }
+  .wp-vision-panel { padding: 22px 18px; }
+  .wp-vision-panel h3 { font-size: 26px; }
+
+  .wp-stack article { grid-template-columns: 42px minmax(0,1fr); padding: 17px; }
+  .wp-stack article > span { width: 40px; height: 40px; }
+  .wp-stack h3 { font-size: 20px; }
+
+  .wp-token-grid strong { font-size: 17px; overflow-wrap: anywhere; }
+  .wp-state-table > div { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 12px; padding: 15px 16px; }
+  .wp-state-table strong { text-align: right; }
+  .wp-checklist > div { gap: 12px; }
+  .wp-roadmap article { padding: 22px 20px; }
+  .wp-roadmap h3 { font-size: 24px; }
+  .wp-governance > div { padding: 22px 20px; }
+  .wp-security-list p { grid-template-columns: 30px minmax(0,1fr); padding: 16px; }
+  .wp-risk { padding: 24px 18px !important; border-radius: 18px; }
+  .wp-risk ul { padding-left: 18px; }
+
+  .wp-close { padding: 70px 0; }
+  .wp-close h2 { font-size: clamp(38px, 11vw, 52px); }
+}
+
+@media (max-width: 390px) {
+  .wp-hero h1 { font-size: 42px; }
+  .wp-status-card { padding: 18px; }
+  .wp-status-card dd { max-width: 145px; }
+  .wp-chapter h2 { font-size: 33px; }
+  .wp-contract { padding: 17px; }
+}
