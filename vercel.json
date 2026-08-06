@@ -28,6 +28,18 @@
       ]
     },
     {
+      "source": "/platform-login-guard.js",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store, max-age=0" }
+      ]
+    },
+    {
+      "source": "/platform-admin-tools.js",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store, max-age=0" }
+      ]
+    },
+    {
       "source": "/assets/plvip-logo-data-(.*).js",
       "headers": [
         { "key": "Cache-Control", "value": "no-store, max-age=0" }
