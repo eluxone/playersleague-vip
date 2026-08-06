@@ -1,0 +1,103 @@
+name: Player Platform QA
+
+on:
+  push:
+    branches:
+      - feature/founding-player-platform
+  pull_request:
+    paths:
+      - '*.html'
+      - '*.js'
+      - '*.css'
+      - 'api/**'
+      - 'supabase/**'
+      - 'vercel.json'
+      - 'sitemap.xml'
+      - '.github/workflows/player-platform-qa.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Check JavaScript syntax
+        run: |
+          find . -type f -name '*.js' \
+            -not -path './assets/*' \
+            -not -path './node_modules/*' \
+            -print0 | xargs -0 -n1 node --check
+
+      - name: Validate deployment JSON
+        run: node -e "JSON.parse(require('fs').readFileSync('vercel.json','utf8')); console.log('vercel.json valid')"
+
+      - name: Validate required platform files and security markers
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+
+          required = [
+              'login.html', 'onboarding.html', 'dashboard.html', 'players.html',
+              'leaderboard.html', 'challenges.html', 'player.html', 'platform-admin.html',
+              'platform.css', 'platform.js', 'platform-login-guard.js', 'platform-admin-tools.js',
+              'supabase/migrations/20260806090000_founding_player_platform.sql',
+              'supabase/migrations/20260806091000_player_score_function_fixes.sql',
+              'supabase/migrations/20260806092000_player_admin_content_tools.sql',
+          ]
+          missing = [name for name in required if not Path(name).exists()]
+          assert not missing, f'Missing required files: {missing}'
+
+          migration = Path('supabase/migrations/20260806090000_founding_player_platform.sql').read_text()
+          for marker in [
+              'enable row level security',
+              'plvip_player_profiles',
+              'plvip_challenge_submissions',
+              'plvip_points_ledger',
+              'plvip_public_leaderboard',
+              'plvip_admin_moderate_profile',
+          ]:
+              assert marker in migration, f'Migration marker missing: {marker}'
+
+          admin_migration = Path('supabase/migrations/20260806092000_player_admin_content_tools.sql').read_text()
+          for marker in [
+              'plvip_admin_save_challenge',
+              'plvip_admin_publish_announcement',
+              'plvip_admin_archive_announcement',
+              'current_user_is_admin()',
+          ]:
+              assert marker in admin_migration, f'Admin migration marker missing: {marker}'
+
+          client = Path('platform.js').read_text()
+          for marker in [
+              'dataset.platformPage',
+              'plvip_public_players',
+              'plvip_public_leaderboard',
+              'plvip_public_profile',
+              'plvip_admin_review_submission',
+          ]:
+              assert marker in client, f'Client marker missing: {marker}'
+
+          admin_client = Path('platform-admin-tools.js').read_text()
+          for marker in [
+              'plvip_admin_save_challenge',
+              'plvip_admin_publish_announcement',
+              'plvip_admin_award_badge',
+              'plvip_admin_add_points',
+          ]:
+              assert marker in admin_client, f'Admin client marker missing: {marker}'
+
+          guard = Path('platform-login-guard.js').read_text()
+          assert "!returnTo.startsWith('//')" in guard, 'Unsafe return path guard is missing.'
+
+          config = json.loads(Path('vercel.json').read_text())
+          assert any(rule.get('source') == '/player/:username' for rule in config.get('rewrites', []))
+          print('Player platform QA markers passed')
+          PY
