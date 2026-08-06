@@ -39,6 +39,10 @@
       z-index: 2 !important;
     }
 
+    .story-emblem img {
+      transform: translateY(26px) !important;
+    }
+
     .token-card > div:last-child { z-index: 3 !important; }
     .form-status[data-state="success"] { color: #62e6a7 !important; }
     .form-status[data-state="error"] { color: #ff9a9a !important; }
@@ -52,6 +56,10 @@
       overflow: hidden !important;
       opacity: 0 !important;
       pointer-events: none !important;
+    }
+
+    @media (max-width: 700px) {
+      .story-emblem img { transform: translateY(18px) !important; }
     }
 
     @media (max-width: 580px) {
