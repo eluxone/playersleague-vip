@@ -116,6 +116,24 @@
     homeStoryCopy.appendChild(storyLink);
   }
 
+  const primaryNav = document.querySelector('#links, #primary-nav');
+  if (primaryNav && !primaryNav.querySelector('a[href="whitepaper.html"]')) {
+    const whitePaperLink = document.createElement('a');
+    whitePaperLink.href = 'whitepaper.html';
+    whitePaperLink.textContent = 'White Paper';
+    const tokenButton = primaryNav.querySelector('[data-add-token]');
+    primaryNav.insertBefore(whitePaperLink, tokenButton || null);
+  }
+
+  document.querySelectorAll('footer nav').forEach((footerNav) => {
+    if (footerNav.querySelector('a[href="whitepaper.html"]')) return;
+    const whitePaperLink = document.createElement('a');
+    whitePaperLink.href = 'whitepaper.html';
+    whitePaperLink.textContent = 'White Paper';
+    const privacyLink = footerNav.querySelector('a[href="privacy.html"]');
+    footerNav.insertBefore(whitePaperLink, privacyLink || footerNav.firstChild);
+  });
+
   const header = document.querySelector('.header, .site-header');
   const setHeader = () => header?.classList.toggle('scrolled', window.scrollY > 12);
   setHeader();
