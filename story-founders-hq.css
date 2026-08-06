@@ -1,4 +1,4 @@
-@import url('story-founders.css?v=20260806-portrait-crop');
+@import url('story-founders.css?v=20260806-responsive-final');
 
 .founder-photo {
   min-height: 520px !important;
@@ -21,7 +21,7 @@
 }
 
 .founder-photo:after {
-  background: linear-gradient(180deg, transparent 58%, rgba(5,6,9,.92) 100%) !important;
+  background: linear-gradient(180deg, transparent 56%, rgba(5,6,9,.94) 100%) !important;
 }
 
 .founder-card:hover .founder-photo img {
@@ -32,13 +32,61 @@
   opacity: 0;
 }
 
-@media (max-width: 900px) {
+.founder-button,.story-console-nav button,.dream-controls button {
+  min-height: 48px;
+  touch-action: manipulation;
+}
+
+.founder-card-copy > p:not(.eyebrow) {
+  text-wrap: pretty;
+}
+
+@media (max-width: 1100px) and (min-width: 701px) {
+  .founder-grid {
+    gap: 20px;
+  }
+
   .founder-photo {
-    min-height: 500px !important;
+    min-height: 470px !important;
+  }
+
+  .founder-card-copy {
+    padding: 28px !important;
+  }
+
+  .founder-card-copy h3 {
+    font-size: 31px !important;
+  }
+
+  .story-console-copy {
+    padding: 38px !important;
+  }
+
+  .dream-screen {
+    padding: 42px !important;
   }
 }
 
-@media (max-width: 650px) {
+@media (max-width: 900px) {
+  .founder-photo {
+    min-height: 480px !important;
+  }
+
+  .founder-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .founder-card-copy > p:not(.eyebrow) {
+    min-height: 132px !important;
+  }
+}
+
+@media (max-width: 700px) {
+  .founder-grid {
+    grid-template-columns: 1fr !important;
+    gap: 22px !important;
+  }
+
   .founder-photo {
     min-height: 430px !important;
   }
@@ -49,6 +97,100 @@
   }
 
   .founder-role {
-    bottom: 18px !important;
+    left: 20px !important;
+    bottom: 17px !important;
+    padding: 9px 13px !important;
+    font-size: 11px !important;
+  }
+
+  .founder-card-copy {
+    padding: 26px 22px 28px !important;
+  }
+
+  .founder-card-copy h3 {
+    font-size: 32px !important;
+  }
+
+  .founder-card-copy > p:not(.eyebrow) {
+    min-height: 0 !important;
+    font-size: 16px;
+    line-height: 1.62;
+  }
+
+  .founder-button {
+    width: 100%;
+    margin-top: 18px !important;
+  }
+
+  .story-console-nav {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    overflow: visible !important;
+  }
+
+  .story-console-nav button {
+    min-width: 0 !important;
+    border-right: 0 !important;
+    border-bottom: 1px solid var(--line) !important;
+    text-align: left;
+    padding: 15px 20px !important;
+  }
+
+  .story-console-nav button:last-child {
+    border-bottom: 0 !important;
+  }
+
+  .story-console-copy {
+    padding: 28px 22px !important;
+  }
+
+  .story-console-copy h3 {
+    font-size: 31px !important;
+  }
+
+  .dream-controls {
+    grid-template-columns: 1fr !important;
+  }
+
+  .dream-controls button {
+    justify-content: flex-start !important;
+    padding: 18px 22px !important;
+  }
+
+  .dream-screen {
+    min-height: 330px !important;
+    padding: 32px 22px !important;
+  }
+
+  .dream-screen h3 {
+    font-size: 38px !important;
+  }
+}
+
+@media (max-width: 420px) {
+  .founder-photo {
+    min-height: 390px !important;
+  }
+
+  .founder-card-copy h3 {
+    font-size: 29px !important;
+  }
+
+  .founder-heading h2 {
+    font-size: 42px !important;
+  }
+
+  .story-console-copy h3 {
+    font-size: 28px !important;
+  }
+
+  .dream-screen h3 {
+    font-size: 34px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .founder-card,.founder-photo img,.dream-meter i {
+    transition: none !important;
   }
 }
