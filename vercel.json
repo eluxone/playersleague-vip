@@ -1,6 +1,9 @@
 {
   "cleanUrls": true,
   "trailingSlash": false,
+  "rewrites": [
+    { "source": "/player/:username", "destination": "/player.html?username=:username" }
+  ],
   "headers": [
     {
       "source": "/(.*)",
@@ -14,6 +17,12 @@
     },
     {
       "source": "/script.js",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store, max-age=0" }
+      ]
+    },
+    {
+      "source": "/platform.js",
       "headers": [
         { "key": "Cache-Control", "value": "no-store, max-age=0" }
       ]
