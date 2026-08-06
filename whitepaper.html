@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#08090d">
+  <meta name="description" content="Players League VIP White Paper: vision, platform concept, PLVIP token facts, roadmap, utility direction, governance principles and risk disclosures.">
+  <meta property="og:title" content="White Paper — Players League VIP">
+  <meta property="og:description" content="The vision, token facts, platform direction and responsible-development principles behind Players League VIP.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://www.playersleague.vip/whitepaper.html">
+  <meta property="og:image" content="https://www.playersleague.vip/assets/plvip-logo.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="canonical" href="https://www.playersleague.vip/whitepaper.html">
+  <link rel="icon" href="assets/favicon-64.png">
+  <link rel="apple-touch-icon" href="assets/plvip-logo.png">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="whitepaper.css?v=1">
+  <script defer src="script.js"></script>
+  <script defer src="whitepaper.js?v=1"></script>
+  <title>White Paper — Players League VIP</title>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="header scrolled">
+    <div class="shell nav">
+      <a class="brand" href="index.html" aria-label="Players League VIP home">
+        <img src="assets/plvip-logo.png" alt="PLVIP logo">
+        <span><strong>Players League</strong><small>VIP</small></span>
+      </a>
+      <button class="menu" aria-expanded="false" aria-controls="links" aria-label="Open menu"><span></span><span></span><span></span></button>
+      <nav id="links">
+        <a href="index.html">Home</a>
+        <a href="story.html">Our Story</a>
+        <a href="whitepaper.html" aria-current="page">White Paper</a>
+        <a href="index.html#join">Join</a>
+        <a href="index.html#token">Token</a>
+        <button class="btn small outline" data-add-token>Add PLVIP</button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="wp-main">
+    <section class="wp-hero">
+      <div class="shell wp-hero-grid">
+        <div class="wp-hero-copy reveal">
+          <p class="eyebrow">PLAYERS LEAGUE VIP · WHITE PAPER</p>
+          <h1>A league that remembers <em>the player.</em></h1>
+          <p class="lead">This document explains the Players League VIP vision, the current PLVIP token facts, the intended platform direction and the principles guiding responsible development.</p>
+          <div class="actions">
+            <a class="btn primary" href="#summary">Read the vision</a>
+            <a class="btn ghost" href="#token-facts">View token facts</a>
+          </div>
+          <p class="wp-version">Version 1.0 · August 2026 · Living document</p>
+        </div>
+        <aside class="wp-status-card reveal" aria-label="Current project status">
+          <div class="wp-status-head">
+            <img src="assets/plvip-logo.png" alt="">
+            <div><span>PLVIP STATUS</span><strong>Foundation stage</strong></div>
+          </div>
+          <dl>
+            <div><dt>Network</dt><dd>Base</dd></div>
+            <div><dt>Contract</dt><dd><code>0xD06D…0449</code></dd></div>
+            <div><dt>Supply</dt><dd>1,000,000,000</dd></div>
+            <div><dt>Trading</dt><dd class="pending">Not active</dd></div>
+            <div><dt>Liquidity</dt><dd class="pending">Not active</dd></div>
+          </dl>
+          <a class="wp-inline-link" href="https://basescan.org/token/0xD06Db34A4BD78f2F059646FDc45530297bE50449" target="_blank" rel="noopener">Verify on BaseScan ↗</a>
+        </aside>
+      </div>
+    </section>
+
+    <div class="wp-progress" aria-hidden="true"><i data-reading-progress></i></div>
+
+    <section class="wp-body">
+      <div class="shell wp-layout">
+        <aside class="wp-toc" aria-label="White paper contents">
+          <p>CONTENTS</p>
+          <nav>
+            <a href="#summary">01 · Executive summary</a>
+            <a href="#problem">02 · The problem</a>
+            <a href="#vision">03 · The vision</a>
+            <a href="#platform">04 · Platform concept</a>
+            <a href="#token-facts">05 · Token facts</a>
+            <a href="#utility">06 · Utility direction</a>
+            <a href="#distribution">07 · Distribution principles</a>
+            <a href="#roadmap">08 · Roadmap</a>
+            <a href="#governance">09 · Governance direction</a>
+            <a href="#security">10 · Security</a>
+            <a href="#risks">11 · Risks and disclaimer</a>
+          </nav>
+        </aside>
+
+        <article class="wp-document">
+          <section id="summary" class="wp-chapter reveal">
+            <p class="wp-chapter-no">01</p>
+            <p class="eyebrow">EXECUTIVE SUMMARY</p>
+            <h2>Players League VIP begins with identity, not speculation.</h2>
+            <p class="wp-opening">Players build skill, friendships, reputations and memories across games, communities and seasons. Yet much of that history becomes fragmented or invisible when platforms change. Players League VIP is a developing concept for a global gaming identity and recognition layer designed to help player progress become part of one growing story.</p>
+            <div class="wp-principles">
+              <article><span>PLAY</span><h3>Participation first</h3><p>The starting point is the player and their activity—not a required token purchase.</p></article>
+              <article><span>COMPETE</span><h3>Recognition earned</h3><p>Future challenges should value skill, consistency, teamwork and fair play.</p></article>
+              <article><span>RISE</span><h3>Progress remembered</h3><p>The long-term ambition is to help achievements and reputation remain meaningful over time.</p></article>
+            </div>
+          </section>
+
+          <section id="problem" class="wp-chapter reveal">
+            <p class="wp-chapter-no">02</p>
+            <p class="eyebrow">THE PROBLEM</p>
+            <h2>Gaming identity is fragmented.</h2>
+            <div class="wp-columns">
+              <div><h3>Progress is trapped</h3><p>Achievements and status often remain locked inside one title, one season or one platform.</p></div>
+              <div><h3>Recognition is incomplete</h3><p>Traditional rankings may capture scores but miss teamwork, leadership, consistency and community contribution.</p></div>
+              <div><h3>Communities are disconnected</h3><p>Players often rebuild profiles, reputations and social connections whenever they move.</p></div>
+              <div><h3>Ownership language is confusing</h3><p>Token projects can overpromise. Players need clear facts, visible risks and honest product status.</p></div>
+            </div>
+          </section>
+
+          <section id="vision" class="wp-chapter reveal">
+            <p class="wp-chapter-no">03</p>
+            <p class="eyebrow">THE VISION</p>
+            <h2>One global league. Many ways to matter.</h2>
+            <p>Players League VIP aims to explore a portable player identity where activity, achievements, badges and community reputation may eventually be presented as one coherent journey.</p>
+            <blockquote>“The match may finish. The player’s legacy should keep growing.”</blockquote>
+            <div class="wp-vision-switcher" data-vision-switcher>
+              <div role="tablist" aria-label="Vision perspectives">
+                <button class="active" type="button" data-vision="player" role="tab" aria-selected="true">For players</button>
+                <button type="button" data-vision="community" role="tab" aria-selected="false">For communities</button>
+                <button type="button" data-vision="partners" role="tab" aria-selected="false">For partners</button>
+              </div>
+              <div class="wp-vision-panel" aria-live="polite">
+                <p class="eyebrow" data-vision-label>FOR PLAYERS</p>
+                <h3 data-vision-title>A profile that tells a fuller story.</h3>
+                <p data-vision-text>Players may eventually present selected games, badges, challenge history and reputation signals through one Players League VIP identity.</p>
+              </div>
+            </div>
+          </section>
+
+          <section id="platform" class="wp-chapter reveal">
+            <p class="wp-chapter-no">04</p>
+            <p class="eyebrow">PLATFORM CONCEPT</p>
+            <h2>A phased platform, built around verified progress.</h2>
+            <div class="wp-stack">
+              <article><span>01</span><div><h3>Player identity</h3><p>Profiles, supported games and user-controlled public information.</p></div><b>PLANNED</b></article>
+              <article><span>02</span><div><h3>Recognition layer</h3><p>Badges, milestones and selected achievement records.</p></div><b>PLANNED</b></article>
+              <article><span>03</span><div><h3>Competition layer</h3><p>Challenges and leaderboards designed around transparent rules.</p></div><b>PLANNED</b></article>
+              <article><span>04</span><div><h3>Community layer</h3><p>Feedback, voting experiments and community-led priorities.</p></div><b>FUTURE DIRECTION</b></article>
+            </div>
+            <p class="wp-note">Planned features are development intentions, not guarantees. Scope and timing may change following technical, legal, security and community review.</p>
+          </section>
+
+          <section id="token-facts" class="wp-chapter reveal">
+            <p class="wp-chapter-no">05</p>
+            <p class="eyebrow">PLVIP TOKEN FACTS</p>
+            <h2>What exists on-chain today.</h2>
+            <div class="wp-token-grid">
+              <article><span>Name</span><strong>Players League VIP</strong></article>
+              <article><span>Symbol</span><strong>PLVIP</strong></article>
+              <article><span>Standard</span><strong>ERC-20</strong></article>
+              <article><span>Network</span><strong>Base · Chain ID 8453</strong></article>
+              <article><span>Decimals</span><strong>18</strong></article>
+              <article><span>Fixed supply</span><strong>1,000,000,000 PLVIP</strong></article>
+            </div>
+            <div class="wp-contract">
+              <span>OFFICIAL CONTRACT</span>
+              <code>0xD06Db34A4BD78f2F059646FDc45530297bE50449</code>
+              <button type="button" data-copy-contract>Copy address</button>
+            </div>
+            <div class="wp-state-table" role="table" aria-label="PLVIP current state">
+              <div role="row"><span role="cell">Contract deployed</span><strong role="cell" class="live">Yes</strong></div>
+              <div role="row"><span role="cell">Source verification</span><strong role="cell" class="live">Verified</strong></div>
+              <div role="row"><span role="cell">Public trading</span><strong role="cell" class="pending">Not active</strong></div>
+              <div role="row"><span role="cell">Public liquidity</span><strong role="cell" class="pending">Not active</strong></div>
+              <div role="row"><span role="cell">Guaranteed value</span><strong role="cell">None</strong></div>
+            </div>
+          </section>
+
+          <section id="utility" class="wp-chapter reveal">
+            <p class="wp-chapter-no">06</p>
+            <p class="eyebrow">UTILITY DIRECTION</p>
+            <h2>Utility should follow a working product.</h2>
+            <p>PLVIP is deployed, but public trading and platform utility are not active. Any future utility should be introduced only when it has a clear purpose, can be implemented securely and is communicated transparently.</p>
+            <div class="wp-utility-grid">
+              <article><i>01</i><h3>Recognition experiments</h3><p>Possible links to badges, status or selected platform achievements.</p><span>Exploratory</span></article>
+              <article><i>02</i><h3>Participation features</h3><p>Possible access to selected challenges, votes or community activities.</p><span>Exploratory</span></article>
+              <article><i>03</i><h3>Partner benefits</h3><p>Possible third-party offers subject to separate terms and availability.</p><span>Exploratory</span></article>
+              <article><i>04</i><h3>Community direction</h3><p>Possible non-binding signalling on selected product priorities.</p><span>Exploratory</span></article>
+            </div>
+            <div class="wp-warning"><strong>Important:</strong> No utility, reward, price, exchange listing, liquidity level or future demand is guaranteed.</div>
+          </section>
+
+          <section id="distribution" class="wp-chapter reveal">
+            <p class="wp-chapter-no">07</p>
+            <p class="eyebrow">DISTRIBUTION PRINCIPLES</p>
+            <h2>Transparency before allocation.</h2>
+            <p>A final public distribution structure has not yet been published. No percentages should be invented or implied before allocations, custody arrangements, vesting and intended uses are formally approved and disclosed.</p>
+            <div class="wp-checklist">
+              <div><span>✓</span><p><strong>Publish exact allocations</strong> before any public distribution.</p></div>
+              <div><span>✓</span><p><strong>Identify controlled wallets</strong> and their intended purpose.</p></div>
+              <div><span>✓</span><p><strong>Disclose vesting or lockups</strong> where applicable.</p></div>
+              <div><span>✓</span><p><strong>Separate operating funds</strong> from liquidity and community allocations.</p></div>
+              <div><span>✓</span><p><strong>Update the White Paper</strong> when verified facts change.</p></div>
+            </div>
+          </section>
+
+          <section id="roadmap" class="wp-chapter reveal">
+            <p class="wp-chapter-no">08</p>
+            <p class="eyebrow">ROADMAP</p>
+            <h2>Build, verify, test—then expand.</h2>
+            <div class="wp-roadmap">
+              <article class="current"><span>PHASE 01</span><h3>Foundation</h3><ul><li>Brand and website</li><li>PLVIP contract deployment</li><li>Founding-player registration</li><li>Secure admin dashboard</li></ul><b>IN PROGRESS</b></article>
+              <article><span>PHASE 02</span><h3>Player identity</h3><ul><li>Profile prototypes</li><li>Supported-game structure</li><li>Badge and reputation research</li><li>Community feedback</li></ul><b>PLANNED</b></article>
+              <article><span>PHASE 03</span><h3>Competition</h3><ul><li>Challenge formats</li><li>Leaderboard rules</li><li>Fair-play controls</li><li>Closed testing</li></ul><b>PLANNED</b></article>
+              <article><span>PHASE 04</span><h3>Responsible expansion</h3><ul><li>Selected utility review</li><li>Partnership pilots</li><li>Governance experiments</li><li>Broader availability</li></ul><b>FUTURE</b></article>
+            </div>
+          </section>
+
+          <section id="governance" class="wp-chapter reveal">
+            <p class="wp-chapter-no">09</p>
+            <p class="eyebrow">GOVERNANCE DIRECTION</p>
+            <h2>Community voice without pretending every decision is decentralised.</h2>
+            <p>Players League VIP may experiment with polls, proposals and non-binding community signals. Until a formal governance system is implemented and documented, operational, security, legal and product decisions remain with the project team.</p>
+            <div class="wp-governance"><div><strong>Community may help signal</strong><p>Feature priorities, supported games, challenge ideas and community initiatives.</p></div><div><strong>The team must retain responsibility</strong><p>Security, compliance, treasury controls, emergency actions and contractual obligations.</p></div></div>
+          </section>
+
+          <section id="security" class="wp-chapter reveal">
+            <p class="wp-chapter-no">10</p>
+            <p class="eyebrow">SECURITY AND OPERATIONS</p>
+            <h2>Security is an ongoing process.</h2>
+            <div class="wp-security-list">
+              <p><span>01</span><strong>Verified contract information</strong> should always be linked to the official BaseScan record.</p>
+              <p><span>02</span><strong>Private keys and secret API keys</strong> must never be exposed in public code or browsers.</p>
+              <p><span>03</span><strong>Database access</strong> should use authentication, least privilege and Row Level Security.</p>
+              <p><span>04</span><strong>Liquidity and treasury actions</strong> should use documented controls before meaningful funds are introduced.</p>
+              <p><span>05</span><strong>Incidents and material changes</strong> should be communicated clearly to the community.</p>
+            </div>
+          </section>
+
+          <section id="risks" class="wp-chapter wp-risk reveal">
+            <p class="wp-chapter-no">11</p>
+            <p class="eyebrow">RISKS AND DISCLAIMER</p>
+            <h2>Participation involves uncertainty.</h2>
+            <p>PLVIP is an early-stage cryptoasset associated with a developing platform concept. Cryptoassets can lose some or all of their value. Smart-contract, blockchain, wallet, liquidity, regulatory, operational, market and cybersecurity risks may affect access, transferability or value.</p>
+            <ul>
+              <li>This White Paper is informational and is not financial, investment, legal or tax advice.</li>
+              <li>PLVIP does not represent company shares, debt, guaranteed income or ownership of project assets.</li>
+              <li>No exchange listing, market price, liquidity, profit, reward, product feature or delivery date is guaranteed.</li>
+              <li>Do not commit funds you cannot afford to lose.</li>
+              <li>Users are responsible for verifying the official contract and understanding applicable laws in their jurisdiction.</li>
+            </ul>
+            <p class="wp-last-updated">Last updated: August 2026. This document may be revised as verified facts, product scope and legal requirements change.</p>
+          </section>
+        </article>
+      </div>
+    </section>
+
+    <section class="wp-close">
+      <div class="shell reveal">
+        <img src="assets/plvip-logo.png" alt="Players League VIP">
+        <p class="eyebrow">THE LEAGUE STARTS WITH PLAYERS</p>
+        <h2>Help shape the first chapter.</h2>
+        <p>Join the founding-player list to share what you play and what you believe the platform should build first.</p>
+        <div class="actions"><a class="btn primary" href="index.html#join">Join the founding list</a><a class="btn ghost" href="story.html">Read our story</a></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="shell footer">
+      <div class="brand"><img src="assets/plvip-logo.png" alt=""><span><strong>Players League</strong><small>VIP</small></span></div>
+      <p>Play. Compete. Rise.</p>
+      <nav><a href="story.html">Our Story</a><a href="whitepaper.html">White Paper</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms & risk</a><a href="https://basescan.org/token/0xD06Db34A4BD78f2F059646FDc45530297bE50449" target="_blank" rel="noopener">BaseScan</a></nav>
+      <small>© <span data-year></span> Players League VIP.</small>
+    </div>
+  </footer>
+  <div class="toast" data-toast role="status" aria-live="polite"></div>
+</body>
+</html>
