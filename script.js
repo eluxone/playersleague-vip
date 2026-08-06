@@ -96,6 +96,7 @@
 
   const CONTRACT_ADDRESS = '0xD06Db34A4BD78f2F059646FDc45530297bE50449';
   const BASE_CHAIN_ID = '0x2105';
+  const X_URL = 'https://x.com/playersleaguev';
   const toast = document.querySelector('[data-toast]');
 
   const showToast = (message) => {
@@ -133,6 +134,17 @@
     primaryNav.insertBefore(whitePaperLink, tokenButton || null);
   }
 
+  if (primaryNav && !primaryNav.querySelector('a[href="https://x.com/playersleaguev"]')) {
+    const xLink = document.createElement('a');
+    xLink.href = X_URL;
+    xLink.target = '_blank';
+    xLink.rel = 'noopener noreferrer';
+    xLink.textContent = 'X';
+    xLink.setAttribute('aria-label', 'Players League VIP on X, @playersleaguev');
+    const actionButton = primaryNav.querySelector('.btn, [data-add-token]');
+    primaryNav.insertBefore(xLink, actionButton || null);
+  }
+
   const isWhitePaperPage = /(^|\/)whitepaper\.html$/.test(window.location.pathname);
   primaryNav?.querySelectorAll('a[href="whitepaper.html"]').forEach((link) => {
     if (isWhitePaperPage) link.setAttribute('aria-current', 'page');
@@ -140,12 +152,23 @@
   });
 
   document.querySelectorAll('footer nav').forEach((footerNav) => {
-    if (footerNav.querySelector('a[href="whitepaper.html"]')) return;
-    const whitePaperLink = document.createElement('a');
-    whitePaperLink.href = 'whitepaper.html';
-    whitePaperLink.textContent = 'White Paper';
-    const privacyLink = footerNav.querySelector('a[href="privacy.html"]');
-    footerNav.insertBefore(whitePaperLink, privacyLink || footerNav.firstChild);
+    if (!footerNav.querySelector('a[href="whitepaper.html"]')) {
+      const whitePaperLink = document.createElement('a');
+      whitePaperLink.href = 'whitepaper.html';
+      whitePaperLink.textContent = 'White Paper';
+      const privacyLink = footerNav.querySelector('a[href="privacy.html"]');
+      footerNav.insertBefore(whitePaperLink, privacyLink || footerNav.firstChild);
+    }
+
+    if (!footerNav.querySelector('a[href="https://x.com/playersleaguev"]')) {
+      const xLink = document.createElement('a');
+      xLink.href = X_URL;
+      xLink.target = '_blank';
+      xLink.rel = 'noopener noreferrer';
+      xLink.textContent = 'X · @playersleaguev';
+      xLink.setAttribute('aria-label', 'Follow Players League VIP on X at @playersleaguev');
+      footerNav.appendChild(xLink);
+    }
   });
 
   const header = document.querySelector('.header, .site-header');
