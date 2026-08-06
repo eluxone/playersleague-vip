@@ -31,7 +31,9 @@
 
   const setMessage = (text, state) => {
     if (!message) return;
-    message.textContent = text;
+    const indicator = document.createElement('i');
+    indicator.setAttribute('aria-hidden', 'true');
+    message.replaceChildren(indicator, document.createTextNode(text));
     if (state) message.dataset.state = state;
     else message.removeAttribute('data-state');
   };
