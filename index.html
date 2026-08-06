@@ -8,16 +8,42 @@
   <meta property="og:title" content="Players League VIP">
   <meta property="og:description" content="Play. Compete. Rise. Join a global player identity and gaming community powered by PLVIP on Base.">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://playersleague.vip/">
-  <meta property="og:image" content="https://playersleague.vip/assets/plvip-logo.png">
+  <meta property="og:url" content="https://www.playersleague.vip/">
+  <meta property="og:image" content="https://www.playersleague.vip/assets/plvip-logo.png">
+  <meta property="og:site_name" content="Players League VIP">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="canonical" href="https://playersleague.vip/">
+  <meta name="twitter:title" content="Players League VIP — Play. Compete. Rise.">
+  <meta name="twitter:description" content="A global player identity and gaming community powered by PLVIP on Base.">
+  <link rel="canonical" href="https://www.playersleague.vip/">
   <link rel="icon" href="assets/favicon-64.png">
   <link rel="apple-touch-icon" href="assets/plvip-logo.png">
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="game-home.css?v=20260806-game-arena">
   <script defer src="game-home.js?v=20260806-game-arena"></script>
   <script defer src="script.js"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://www.playersleague.vip/#organization",
+        "name": "Players League VIP",
+        "url": "https://www.playersleague.vip/",
+        "logo": "https://www.playersleague.vip/assets/plvip-logo.png",
+        "email": "join@playersleague.vip",
+        "description": "A developing global gaming identity, recognition and competition community."
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://www.playersleague.vip/#website",
+        "url": "https://www.playersleague.vip/",
+        "name": "Players League VIP",
+        "publisher": { "@id": "https://www.playersleague.vip/#organization" }
+      }
+    ]
+  }
+  </script>
   <title>Players League VIP — Play. Compete. Rise.</title>
 </head>
 <body>
@@ -30,7 +56,7 @@
       </a>
       <button class="menu" aria-expanded="false" aria-controls="links" aria-label="Open menu"><span></span><span></span><span></span></button>
       <nav id="links">
-        <a href="#story">Story</a><a href="#join">Join</a><a href="#utility">Utility</a><a href="#token">Token</a><a href="#roadmap">Roadmap</a><a href="#faq">FAQ</a>
+        <a href="story.html">Story</a><a href="#join">Join</a><a href="#utility">Utility</a><a href="#token">Token</a><a href="transparency.html">Transparency</a><a href="#roadmap">Roadmap</a><a href="#faq">FAQ</a><a href="whitepaper.html">White Paper</a>
         <button class="btn small outline" data-add-token>Add PLVIP</button>
       </nav>
     </div>
@@ -46,7 +72,7 @@
           <p class="lead">Players League VIP is building a worldwide gaming identity where players compete, earn recognition and carry their reputation across a growing community.</p>
           <div class="actions">
             <a class="btn primary" href="#join">Join the founding list</a>
-            <a class="btn ghost" href="https://basescan.org/token/0xD06Db34A4BD78f2F059646FDc45530297bE50449" target="_blank" rel="noopener">View on BaseScan</a>
+            <a class="btn ghost" href="https://basescan.org/token/0xD06Db34A4BD78f2F059646FDc45530297bE50449" target="_blank" rel="noopener noreferrer">View on BaseScan</a>
           </div>
           <p class="status"><i></i><strong>PLVIP is deployed.</strong> Trading and public liquidity are not active yet.</p>
         </div>
@@ -89,8 +115,9 @@
           </div>
           <label>What should we build first?<textarea name="priority" rows="4" maxlength="500" placeholder="Profiles, leaderboards, challenges, badges..."></textarea></label>
           <label class="check"><input type="checkbox" name="consent" required><span>I agree to send these details for early-access contact. Registration does not guarantee tokens, rewards or platform access.</span></label>
-          <button class="btn primary full" type="submit">Prepare registration email</button>
-          <p class="note">The site does not store this form. It prepares an email to <strong>join@playersleague.vip</strong>.</p>
+          <button class="btn primary full" type="submit">Join the founding player list</button>
+          <p class="note">Your registration is submitted securely and stored for early-access contact. No wallet or token purchase is required. See our <a href="privacy.html">Privacy Policy</a>.</p>
+          <noscript><p class="note">JavaScript is required to submit this registration form securely.</p></noscript>
           <p class="form-status" data-form-status aria-live="polite"></p>
         </form>
       </div>
@@ -107,13 +134,13 @@
 
     <section class="section dark" id="token">
       <div class="shell token-grid">
-        <div class="reveal"><p class="eyebrow">PLVIP TOKEN</p><h2>Simple, fixed and transparent.</h2><p class="muted">PLVIP is an ERC-20 token deployed on Base. The contract has no additional minting, transfer tax, blacklist, pause control or upgrade mechanism.</p><button class="btn primary" data-add-token>Add PLVIP to wallet</button></div>
+        <div class="reveal"><p class="eyebrow">PLVIP TOKEN</p><h2>Simple, fixed and transparent.</h2><p class="muted">PLVIP is an ERC-20 token deployed on Base. The contract has no additional minting, transfer tax, blacklist, pause control or upgrade mechanism.</p><div class="actions"><button class="btn primary" data-add-token>Add PLVIP to wallet</button><a class="btn ghost" href="transparency.html">Open Transparency Hub</a></div></div>
         <div class="contract reveal">
           <span>Official Base contract</span><code>0xD06Db34A4BD78f2F059646FDc45530297bE50449</code><button data-copy-address>Copy address</button>
           <dl><div><dt>Name</dt><dd>Players League VIP</dd></div><div><dt>Symbol</dt><dd>PLVIP</dd></div><div><dt>Supply</dt><dd>1 billion</dd></div><div><dt>Decimals</dt><dd>18</dd></div><div><dt>Network</dt><dd>Base (8453)</dd></div><div><dt>Tax</dt><dd>0%</dd></div></dl>
         </div>
       </div>
-      <div class="shell allocation reveal"><h3>Current allocation status</h3><div class="allocation-grid"><article><strong>100%</strong><span>Currently held by the deployment wallet</span></article><article><strong>0</strong><span>Public liquidity pools announced</span></article><article><strong>Pending</strong><span>Community, treasury and team allocation plan</span></article></div><p>Before any trading launch, the project will publish the planned allocations, treasury addresses and liquidity details. The current on-chain concentration should be considered a material risk.</p></div>
+      <div class="shell allocation reveal"><h3>Current publication status</h3><div class="allocation-grid"><article><strong>Pending</strong><span>Final public allocation plan</span></article><article><strong>0</strong><span>Official public liquidity pools announced</span></article><article><strong>Live</strong><span>On-chain contract verification available</span></article></div><p>Before any trading launch, the project will publish planned allocations, controlled treasury addresses and liquidity details. Until then, visitors should treat distribution and liquidity as unannounced and independently verify all contract claims.</p></div>
     </section>
 
     <section class="section" id="roadmap">
@@ -130,7 +157,7 @@
     </section>
   </main>
 
-  <footer><div class="shell footer"><div class="brand"><img src="assets/plvip-logo.png" alt=""><span><strong>Players League</strong><small>VIP</small></span></div><p>Play. Compete. Rise.</p><nav><a href="privacy.html">Privacy</a><a href="terms.html">Terms & risk</a><a href="https://basescan.org/token/0xD06Db34A4BD78f2F059646FDc45530297bE50449" target="_blank" rel="noopener">BaseScan</a></nav><small>© <span data-year></span> Players League VIP.</small></div></footer>
+  <footer><div class="shell footer"><div class="brand"><img src="assets/plvip-logo.png" alt=""><span><strong>Players League</strong><small>VIP</small></span></div><p>Play. Compete. Rise.</p><nav><a href="whitepaper.html">White Paper</a><a href="transparency.html">Transparency</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms &amp; risk</a><a href="https://basescan.org/token/0xD06Db34A4BD78f2F059646FDc45530297bE50449" target="_blank" rel="noopener noreferrer">BaseScan</a></nav><small>© <span data-year></span> Players League VIP.</small></div></footer>
   <div class="toast" data-toast role="status" aria-live="polite"></div>
 </body>
 </html>
