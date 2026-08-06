@@ -1,6 +1,34 @@
 (() => {
   'use strict';
 
+  const emblem = document.querySelector('.trust-emblem img');
+  if (emblem) {
+    emblem.src = 'assets/contract-emblem.svg?v=20260806-1';
+    emblem.classList.add('trust-contract-logo');
+  }
+
+  const logoFix = document.createElement('style');
+  logoFix.textContent = `
+    .trust-emblem .trust-contract-logo {
+      width: min(286px, 78%);
+      margin: -24px 0 -20px;
+      filter: drop-shadow(0 28px 48px rgba(0, 0, 0, .58));
+    }
+    .trust-emblem .trust-contract-logo + span {
+      margin-top: 18px;
+    }
+    @media (max-width: 680px) {
+      .trust-emblem .trust-contract-logo {
+        width: min(224px, 76%);
+        margin: -18px 0 -14px;
+      }
+      .trust-emblem .trust-contract-logo + span {
+        margin-top: 14px;
+      }
+    }
+  `;
+  document.head.appendChild(logoFix);
+
   const panel = document.querySelector('[data-live-panel]');
   const message = document.querySelector('[data-status-message]');
   const refreshButton = document.querySelector('[data-refresh-status]');
