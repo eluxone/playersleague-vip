@@ -12,7 +12,6 @@
   const sessionGet = (key) => {
     try { return sessionStorage.getItem(key); } catch (_) { return null; }
   };
-
   const sessionSet = (key, value) => {
     try { sessionStorage.setItem(key, value); } catch (_) {}
   };
@@ -76,20 +75,8 @@
       </div>
     </div>
 
-    <div class="plvip-intro__gate" data-intro-gate>
-      <div class="plvip-intro__gate-mark" aria-hidden="true"><img src="assets/plvip-logo.png" alt=""></div>
-      <p class="plvip-intro__gate-eyebrow">PLAYERS LEAGUE VIP</p>
-      <h2>Enter the League</h2>
-      <p class="plvip-intro__gate-copy">A longer cinematic connection sequence inspired by the sound of the early internet.</p>
-      <div class="plvip-intro__gate-actions">
-        <button class="plvip-intro__enter" type="button" data-intro-sound><span>◖</span> Enter with sound</button>
-        <button class="plvip-intro__silent" type="button" data-intro-silent>Enter silently</button>
-      </div>
-      <p class="plvip-intro__hint">Sound begins after your tap. You can skip the sequence at any time.</p>
-    </div>
-
     <div class="plvip-intro__footer">
-      <p class="plvip-intro__status"><i></i><span data-intro-status>Awaiting player input</span></p>
+      <p class="plvip-intro__status"><i></i><span data-intro-status>Dialling the league network</span></p>
       <p class="plvip-intro__counter"><b data-intro-counter>00</b><span>/ ${String(INTRO_DURATION_SECONDS).padStart(2, '0')}</span></p>
     </div>
     <div class="plvip-intro__progress" aria-hidden="true"><i></i></div>`;
@@ -99,9 +86,6 @@
   document.documentElement.style.overflow = 'hidden';
 
   const lines = [...intro.querySelectorAll('[data-intro-line]')];
-  const gate = intro.querySelector('[data-intro-gate]');
-  const soundButton = intro.querySelector('[data-intro-sound]');
-  const silentButton = intro.querySelector('[data-intro-silent]');
   const skipButton = intro.querySelector('[data-intro-skip]');
   const statusText = intro.querySelector('[data-intro-status]');
   const counter = intro.querySelector('[data-intro-counter]');
@@ -114,6 +98,7 @@
   let fallbackMaster = null;
   let finished = false;
   let soundStarted = false;
+  let introStartedAt = 0;
 
   if (progressBar) progressBar.style.animationDuration = `${INTRO_DURATION_MS}ms`;
 
@@ -156,6 +141,7 @@
     if (finished) return;
     finished = true;
     clearTimers();
+    removeSoundUnlockListeners();
     sessionSet('plvip-intro-played', '1');
     intro.classList.add('is-leaving');
     document.body.classList.remove('plvip-intro-active');
@@ -233,33 +219,27 @@
       fallbackMaster.connect(compressor).connect(fallbackContext.destination);
 
       const t = fallbackContext.currentTime + 0.03;
-
       scheduleFallbackTone(350, t, 0.72, 0.28);
       scheduleFallbackTone(440, t, 0.72, 0.24);
-
       const digits = [[697, 1209], [697, 1336], [770, 1209], [852, 1477], [770, 1336], [941, 1209]];
       digits.forEach(([low, high], index) => {
         const at = t + 0.75 + index * 0.135;
         scheduleFallbackTone(low, at, 0.095, 0.28);
         scheduleFallbackTone(high, at, 0.095, 0.28);
       });
-
       scheduleFallbackTone(2100, t + 2.25, 0.65, 0.32, 'sine', 1980);
       scheduleFallbackTone(1200, t + 2.48, 0.58, 0.30, 'sawtooth', 2750);
       scheduleFallbackNoise(t + 3.05, 0.25, 0.14);
-
       for (let i = 0; i < 28; i += 1) {
         const at = t + 3.35 + i * 0.205;
         const base = [1070, 1270, 1650, 1850, 2200, 2400][i % 6];
         scheduleFallbackTone(base, at, 0.13, 0.20, i % 2 ? 'square' : 'sawtooth', base + (i % 3 === 0 ? 520 : 180));
         if (i % 4 === 0) scheduleFallbackNoise(at + 0.055, 0.10, 0.08);
       }
-
       scheduleFallbackTone(980, t + 8.95, 1.05, 0.27, 'square', 2380);
       scheduleFallbackTone(1800, t + 9.70, 0.78, 0.25, 'sine', 2050);
       scheduleFallbackTone(2400, t + 9.84, 0.62, 0.20, 'triangle', 2680);
       scheduleFallbackNoise(t + 10.55, 0.32, 0.12);
-
       scheduleFallbackTone(880, t + 11.35, 1.30, 0.19, 'sine', 1760);
       scheduleFallbackTone(1320, t + 11.42, 1.18, 0.13, 'triangle', 2640);
       return true;
@@ -269,8 +249,44 @@
     }
   };
 
-  const startDialupSound = async () => {
-    return startFallbackDialup();
+  const startDialupSound = async (syncToElapsed = false) => {
+    try {
+      introAudio.preload = 'auto';
+      introAudio.volume = 1;
+      if (syncToElapsed && introStartedAt) {
+        const elapsed = Math.max(0, (performance.now() - introStartedAt) / 1000);
+        introAudio.currentTime = elapsed;
+      } else {
+        introAudio.currentTime = 0;
+      }
+      await introAudio.play();
+      return true;
+    } catch (error) {
+      console.info('PLVIP autoplay sound blocked until first interaction.');
+      return false;
+    }
+  };
+
+  const removeSoundUnlockListeners = () => {
+    window.removeEventListener('pointerdown', unlockSound);
+    window.removeEventListener('touchstart', unlockSound);
+    window.removeEventListener('keydown', unlockSound);
+  };
+
+  const unlockSound = async () => {
+    if (finished || soundStarted) {
+      removeSoundUnlockListeners();
+      return;
+    }
+    soundStarted = await startDialupSound(true);
+    intro.classList.toggle('has-sound', soundStarted);
+    if (soundStarted) removeSoundUnlockListeners();
+  };
+
+  const armSoundUnlock = () => {
+    window.addEventListener('pointerdown', unlockSound, { passive: true });
+    window.addEventListener('touchstart', unlockSound, { passive: true });
+    window.addEventListener('keydown', unlockSound);
   };
 
   const startCounter = () => {
@@ -283,15 +299,17 @@
     counterTimer = setInterval(update, 100);
   };
 
-  const run = async (withSound) => {
+  const run = async () => {
     if (intro.classList.contains('is-running')) return;
 
-    gate.classList.add('is-hidden');
     intro.classList.add('is-running');
-    setStatus(withSound ? 'Dialling the league network' : 'Starting league signal');
+    introStartedAt = performance.now();
+    setStatus('Dialling the league network');
 
-    if (withSound) soundStarted = await startDialupSound();
+    soundStarted = await startDialupSound(false);
     intro.classList.toggle('has-sound', soundStarted);
+    if (!soundStarted) armSoundUnlock();
+
     startCounter();
 
     const sequence = reducedMotion
@@ -314,13 +332,11 @@
     timers.push(setTimeout(finish, INTRO_DURATION_MS));
   };
 
-  soundButton.addEventListener('click', () => run(true), { once: true });
-  silentButton.addEventListener('click', () => run(false), { once: true });
   skipButton.addEventListener('click', finish);
 
   intro.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') finish();
   });
 
-  requestAnimationFrame(() => soundButton.focus({ preventScroll: true }));
+  requestAnimationFrame(() => run());
 })();
