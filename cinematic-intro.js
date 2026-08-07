@@ -5,19 +5,27 @@
 
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const forceReplay = new URLSearchParams(window.location.search).get('intro') === '1';
+  const INTRO_DURATION_MS = reducedMotion ? 6500 : 13200;
+  const INTRO_DURATION_SECONDS = reducedMotion ? 6 : 13;
+  const AUDIO_URL = 'assets/plvip-dialup-intro.mp3?v=20260807-dialup2';
 
   const sessionGet = (key) => {
     try { return sessionStorage.getItem(key); } catch (_) { return null; }
   };
+
   const sessionSet = (key, value) => {
     try { sessionStorage.setItem(key, value); } catch (_) {}
   };
 
-  // The cinematic is the homepage loader. Prevent game-home.js from showing a second loader.
   sessionSet('plvip_game_loaded', '1');
 
   const hasPlayed = sessionGet('plvip-intro-played') === '1';
   if (hasPlayed && !forceReplay) return;
+
+  const introAudio = new Audio(AUDIO_URL);
+  introAudio.preload = 'none';
+  introAudio.volume = 1;
+  introAudio.setAttribute('playsinline', '');
 
   const intro = document.createElement('div');
   intro.className = 'plvip-intro';
@@ -72,7 +80,7 @@
       <div class="plvip-intro__gate-mark" aria-hidden="true"><img src="assets/plvip-logo.png" alt=""></div>
       <p class="plvip-intro__gate-eyebrow">PLAYERS LEAGUE VIP</p>
       <h2>Enter the League</h2>
-      <p class="plvip-intro__gate-copy">A seven-second cinematic entry into the founding season.</p>
+      <p class="plvip-intro__gate-copy">A longer cinematic connection sequence inspired by the sound of the early internet.</p>
       <div class="plvip-intro__gate-actions">
         <button class="plvip-intro__enter" type="button" data-intro-sound><span>◖</span> Enter with sound</button>
         <button class="plvip-intro__silent" type="button" data-intro-silent>Enter silently</button>
@@ -82,7 +90,7 @@
 
     <div class="plvip-intro__footer">
       <p class="plvip-intro__status"><i></i><span data-intro-status>Awaiting player input</span></p>
-      <p class="plvip-intro__counter"><b data-intro-counter>00</b><span>/ 07</span></p>
+      <p class="plvip-intro__counter"><b data-intro-counter>00</b><span>/ ${String(INTRO_DURATION_SECONDS).padStart(2, '0')}</span></p>
     </div>
     <div class="plvip-intro__progress" aria-hidden="true"><i></i></div>`;
 
@@ -98,12 +106,16 @@
   const statusText = intro.querySelector('[data-intro-status]');
   const counter = intro.querySelector('[data-intro-counter]');
   const kicker = intro.querySelector('[data-intro-kicker]');
+  const progressBar = intro.querySelector('.plvip-intro__progress i');
 
   let timers = [];
   let counterTimer = null;
-  let audioContext = null;
-  let master = null;
+  let fallbackContext = null;
+  let fallbackMaster = null;
   let finished = false;
+  let soundStarted = false;
+
+  if (progressBar) progressBar.style.animationDuration = `${INTRO_DURATION_MS}ms`;
 
   const clearTimers = () => {
     timers.forEach(clearTimeout);
@@ -113,15 +125,31 @@
   };
 
   const stopAudio = () => {
-    if (!audioContext || audioContext.state === 'closed') return;
-    const now = audioContext.currentTime;
-    const stopAt = now + 0.65;
-    if (master) {
-      master.gain.cancelScheduledValues(now);
-      master.gain.setValueAtTime(Math.max(master.gain.value || 0.18, 0.0001), now);
-      master.gain.exponentialRampToValueAtTime(0.0001, stopAt);
+    if (!introAudio.paused) {
+      const fadeStarted = performance.now();
+      const initialVolume = introAudio.volume;
+      const fade = () => {
+        const progress = Math.min(1, (performance.now() - fadeStarted) / 360);
+        introAudio.volume = initialVolume * (1 - progress);
+        if (progress < 1) requestAnimationFrame(fade);
+        else {
+          introAudio.pause();
+          introAudio.currentTime = 0;
+          introAudio.volume = 1;
+        }
+      };
+      requestAnimationFrame(fade);
     }
-    setTimeout(() => audioContext?.close().catch(() => {}), 800);
+
+    if (fallbackContext && fallbackContext.state !== 'closed') {
+      const now = fallbackContext.currentTime;
+      if (fallbackMaster) {
+        fallbackMaster.gain.cancelScheduledValues(now);
+        fallbackMaster.gain.setValueAtTime(Math.max(fallbackMaster.gain.value || 0.3, 0.0001), now);
+        fallbackMaster.gain.exponentialRampToValueAtTime(0.0001, now + 0.35);
+      }
+      setTimeout(() => fallbackContext?.close().catch(() => {}), 500);
+    }
   };
 
   const finish = () => {
@@ -150,114 +178,140 @@
     if (statusText) statusText.textContent = text;
   };
 
-  const tone = (frequency, start, duration, volume, type = 'sine', endFrequency = null) => {
-    if (!audioContext || !master) return;
-    const osc = audioContext.createOscillator();
-    const gain = audioContext.createGain();
-    osc.type = type;
-    osc.frequency.setValueAtTime(frequency, start);
-    if (endFrequency) osc.frequency.exponentialRampToValueAtTime(endFrequency, start + duration);
+  const scheduleFallbackTone = (frequency, start, duration, volume, type = 'sine', endFrequency = null) => {
+    if (!fallbackContext || !fallbackMaster) return;
+    const oscillator = fallbackContext.createOscillator();
+    const gain = fallbackContext.createGain();
+    oscillator.type = type;
+    oscillator.frequency.setValueAtTime(frequency, start);
+    if (endFrequency) oscillator.frequency.exponentialRampToValueAtTime(endFrequency, start + duration);
     gain.gain.setValueAtTime(0.0001, start);
-    gain.gain.exponentialRampToValueAtTime(volume, start + Math.min(0.08, duration * 0.2));
+    gain.gain.exponentialRampToValueAtTime(volume, start + Math.min(0.018, duration * 0.2));
     gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
-    osc.connect(gain).connect(master);
-    osc.start(start);
-    osc.stop(start + duration + 0.06);
+    oscillator.connect(gain).connect(fallbackMaster);
+    oscillator.start(start);
+    oscillator.stop(start + duration + 0.03);
   };
 
-  const noiseHit = (start, duration = 0.22, volume = 0.04, highpass = 160) => {
-    if (!audioContext || !master) return;
-    const sampleRate = audioContext.sampleRate;
-    const buffer = audioContext.createBuffer(1, Math.max(1, Math.floor(sampleRate * duration)), sampleRate);
+  const scheduleFallbackNoise = (start, duration = 0.18, volume = 0.08) => {
+    if (!fallbackContext || !fallbackMaster) return;
+    const sampleRate = fallbackContext.sampleRate;
+    const buffer = fallbackContext.createBuffer(1, Math.max(1, Math.floor(sampleRate * duration)), sampleRate);
     const data = buffer.getChannelData(0);
     for (let i = 0; i < data.length; i += 1) {
-      const envelope = Math.pow(1 - i / data.length, 2.2);
+      const envelope = Math.pow(1 - i / data.length, 1.8);
       data[i] = (Math.random() * 2 - 1) * envelope;
     }
-    const src = audioContext.createBufferSource();
-    const filter = audioContext.createBiquadFilter();
-    const gain = audioContext.createGain();
-    src.buffer = buffer;
-    filter.type = 'highpass';
-    filter.frequency.value = highpass;
+    const source = fallbackContext.createBufferSource();
+    const filter = fallbackContext.createBiquadFilter();
+    const gain = fallbackContext.createGain();
+    source.buffer = buffer;
+    filter.type = 'bandpass';
+    filter.frequency.value = 2400;
+    filter.Q.value = 0.65;
     gain.gain.setValueAtTime(volume, start);
     gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
-    src.connect(filter).connect(gain).connect(master);
-    src.start(start);
+    source.connect(filter).connect(gain).connect(fallbackMaster);
+    source.start(start);
   };
 
-  const startSoundscape = async () => {
+  const startFallbackDialup = async () => {
     try {
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      if (!AudioCtx) return false;
-      audioContext = new AudioCtx();
-      await audioContext.resume();
-      master = audioContext.createGain();
-      master.gain.value = 0.20;
-      master.connect(audioContext.destination);
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContextClass) return false;
+      fallbackContext = new AudioContextClass();
+      await fallbackContext.resume();
 
-      const t = audioContext.currentTime + 0.04;
-      // Low cinematic bed.
-      tone(43.65, t, 6.65, 0.055, 'sine', 55);
-      tone(87.3, t, 6.55, 0.018, 'triangle', 110);
+      fallbackMaster = fallbackContext.createGain();
+      const compressor = fallbackContext.createDynamicsCompressor();
+      compressor.threshold.value = -18;
+      compressor.knee.value = 12;
+      compressor.ratio.value = 6;
+      compressor.attack.value = 0.003;
+      compressor.release.value = 0.22;
+      fallbackMaster.gain.value = 0.52;
+      fallbackMaster.connect(compressor).connect(fallbackContext.destination);
 
-      // Four story beats.
-      [0.18, 1.48, 2.72, 3.94].forEach((offset, index) => {
-        noiseHit(t + offset, 0.18 + index * 0.018, 0.028 + index * 0.004, 180 + index * 60);
-        tone(150 + index * 42, t + offset, 0.42, 0.032, 'sine', 235 + index * 70);
+      const t = fallbackContext.currentTime + 0.03;
+
+      scheduleFallbackTone(350, t, 0.72, 0.28);
+      scheduleFallbackTone(440, t, 0.72, 0.24);
+
+      const digits = [[697, 1209], [697, 1336], [770, 1209], [852, 1477], [770, 1336], [941, 1209]];
+      digits.forEach(([low, high], index) => {
+        const at = t + 0.75 + index * 0.135;
+        scheduleFallbackTone(low, at, 0.095, 0.28);
+        scheduleFallbackTone(high, at, 0.095, 0.28);
       });
 
-      // Final rising sonic logo.
-      tone(220, t + 5.05, 1.28, 0.042, 'triangle', 440);
-      tone(440, t + 5.18, 1.15, 0.040, 'sine', 880);
-      tone(659.25, t + 5.34, 1.02, 0.024, 'sine', 987.77);
-      noiseHit(t + 5.08, 0.34, 0.04, 280);
+      scheduleFallbackTone(2100, t + 2.25, 0.65, 0.32, 'sine', 1980);
+      scheduleFallbackTone(1200, t + 2.48, 0.58, 0.30, 'sawtooth', 2750);
+      scheduleFallbackNoise(t + 3.05, 0.25, 0.14);
+
+      for (let i = 0; i < 28; i += 1) {
+        const at = t + 3.35 + i * 0.205;
+        const base = [1070, 1270, 1650, 1850, 2200, 2400][i % 6];
+        scheduleFallbackTone(base, at, 0.13, 0.20, i % 2 ? 'square' : 'sawtooth', base + (i % 3 === 0 ? 520 : 180));
+        if (i % 4 === 0) scheduleFallbackNoise(at + 0.055, 0.10, 0.08);
+      }
+
+      scheduleFallbackTone(980, t + 8.95, 1.05, 0.27, 'square', 2380);
+      scheduleFallbackTone(1800, t + 9.70, 0.78, 0.25, 'sine', 2050);
+      scheduleFallbackTone(2400, t + 9.84, 0.62, 0.20, 'triangle', 2680);
+      scheduleFallbackNoise(t + 10.55, 0.32, 0.12);
+
+      scheduleFallbackTone(880, t + 11.35, 1.30, 0.19, 'sine', 1760);
+      scheduleFallbackTone(1320, t + 11.42, 1.18, 0.13, 'triangle', 2640);
       return true;
     } catch (error) {
-      console.warn('PLVIP intro sound unavailable', error);
+      console.warn('PLVIP fallback dial-up sound unavailable', error);
       return false;
     }
+  };
+
+  const startDialupSound = async () => {
+    return startFallbackDialup();
   };
 
   const startCounter = () => {
     const startedAt = performance.now();
     const update = () => {
-      const elapsed = Math.min(7, (performance.now() - startedAt) / 1000);
+      const elapsed = Math.min(INTRO_DURATION_SECONDS, (performance.now() - startedAt) / 1000);
       if (counter) counter.textContent = String(Math.floor(elapsed)).padStart(2, '0');
     };
     update();
-    counterTimer = setInterval(update, 120);
+    counterTimer = setInterval(update, 100);
   };
 
   const run = async (withSound) => {
     if (intro.classList.contains('is-running')) return;
+
     gate.classList.add('is-hidden');
     intro.classList.add('is-running');
-    setStatus(withSound ? 'Starting league signal + audio' : 'Starting league signal');
+    setStatus(withSound ? 'Dialling the league network' : 'Starting league signal');
 
-    let soundStarted = false;
-    if (withSound) soundStarted = await startSoundscape();
+    if (withSound) soundStarted = await startDialupSound();
     intro.classList.toggle('has-sound', soundStarted);
     startCounter();
 
     const sequence = reducedMotion
-      ? [[0, 0], [3, 500], [4, 1050]]
-      : [[0, 160], [1, 1480], [2, 2720], [3, 3940], [4, 5260]];
+      ? [[0, 0], [3, 2100], [4, 4200]]
+      : [[0, 250], [1, 2650], [2, 5050], [3, 7450], [4, 9850]];
 
     sequence.forEach(([index, delay]) => timers.push(setTimeout(() => showLine(index), delay)));
 
     const statusSequence = reducedMotion
-      ? [['Player identity ready', 250], ['League online', 1050]]
+      ? [['Reading player signal', 700], ['Recording player legacy', 2800], ['Players League VIP online', 4700]]
       : [
-          ['Reading player signal', 520],
-          ['Building identity layer', 1820],
-          ['Linking competition network', 3060],
-          ['Recording player legacy', 4300],
-          ['Players League VIP online', 5580]
+          ['Dial tone detected', 420],
+          ['Negotiating player identity', 2850],
+          ['Linking competition network', 5250],
+          ['Recording player legacy', 7650],
+          ['Players League VIP online', 10100]
         ];
 
     statusSequence.forEach(([text, delay]) => timers.push(setTimeout(() => setStatus(text), delay)));
-    timers.push(setTimeout(finish, reducedMotion ? 1800 : 7000));
+    timers.push(setTimeout(finish, INTRO_DURATION_MS));
   };
 
   soundButton.addEventListener('click', () => run(true), { once: true });
