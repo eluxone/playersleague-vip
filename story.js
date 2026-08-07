@@ -3,8 +3,29 @@
 
   const founderStyles = document.createElement('link');
   founderStyles.rel = 'stylesheet';
-  founderStyles.href = 'story-founders-hq.css?v=20260805-mobile-final';
+  founderStyles.href = 'story-founders-hq.css?v=20260807-whitepaper-link';
   document.head.appendChild(founderStyles);
+
+  // Keep the Story page navigation aligned with the main site.
+  const headerNav = document.querySelector('header #links');
+  if (headerNav && !headerNav.querySelector('a[href="whitepaper.html"]')) {
+    const link = document.createElement('a');
+    link.href = 'whitepaper.html';
+    link.textContent = 'White Paper';
+    const tokenLink = headerNav.querySelector('a[href="index.html#token"]');
+    if (tokenLink) tokenLink.insertAdjacentElement('afterend', link);
+    else headerNav.appendChild(link);
+  }
+
+  const footerNav = document.querySelector('footer nav');
+  if (footerNav && !footerNav.querySelector('a[href="whitepaper.html"]')) {
+    const link = document.createElement('a');
+    link.href = 'whitepaper.html';
+    link.textContent = 'White Paper';
+    const storyLink = footerNav.querySelector('a[href="story.html"]');
+    if (storyLink) storyLink.insertAdjacentElement('afterend', link);
+    else footerNav.prepend(link);
+  }
 
   const loadScript = (src) => new Promise((resolve, reject) => {
     const script = document.createElement('script');
