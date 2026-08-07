@@ -1,308 +1,100 @@
 (() => {
   'use strict';
+  if (!/\/(?:index\.html|preview\.html)?$/.test(location.pathname)) return;
 
-  if (!/\/(?:index\.html)?$/.test(window.location.pathname)) return;
+  const force = new URLSearchParams(location.search).get('intro') === '1';
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const key = 'plvip-intro-v6-played';
+  try {
+    sessionStorage.setItem('plvip_game_loaded', '1');
+    if (sessionStorage.getItem(key) === '1' && !force) return;
+  } catch (_) {}
 
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const forceReplay = new URLSearchParams(window.location.search).get('intro') === '1';
-  const duration = reducedMotion ? 8500 : 16000;
+  const FRONT = 'https://upload.wikimedia.org/wikipedia/commons/7/7b/Obverse_of_the_series_2009_%24100_Federal_Reserve_Note.jpg';
+  const BACK = 'https://upload.wikimedia.org/wikipedia/commons/b/b7/New100back.jpg';
+  const CASH = 'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=2400&q=88';
+  const CITY = 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=2400&q=88';
+  const GAME = 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=2400&q=88';
+  const DURATION = reduced ? 9000 : 17600;
+  const BILL_COUNT = reduced ? 12 : Math.min(38, Math.max(24, Math.round(innerWidth / 44)));
 
-  const safeGet = (key) => { try { return sessionStorage.getItem(key); } catch (_) { return null; } };
-  const safeSet = (key, value) => { try { sessionStorage.setItem(key, value); } catch (_) {} };
+  const css = `
+  .plx{--x:0;--y:0;--sx:50vw;--sy:50vh;position:fixed;inset:0;z-index:2147483000;overflow:hidden;background:#020306;color:#fff;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;isolation:isolate;cursor:crosshair;opacity:1;visibility:visible;transition:opacity .85s ease,visibility .85s ease}.plx.leave{opacity:0;visibility:hidden;pointer-events:none}.plx-bg,.plx-shade,.plx-grain,.plx-bills,.plx-matrix{position:absolute;inset:0}.plx-bg{z-index:-6;background-position:center;background-size:cover;opacity:0;filter:saturate(.76) contrast(1.14) brightness(.58);transform:scale(1.12) translate(calc(var(--x)*-24px),calc(var(--y)*-16px));transition:opacity 1s ease,transform 4.5s ease,filter 1s ease}.plx-bg.on{opacity:1;transform:scale(1.045) translate(calc(var(--x)*-32px),calc(var(--y)*-20px));filter:saturate(.9) contrast(1.1) brightness(.72)}.plx-shade{z-index:-5;background:radial-gradient(circle 360px at var(--sx) var(--sy),rgba(231,185,78,.15),transparent 70%),linear-gradient(95deg,rgba(0,0,0,.9),rgba(0,0,0,.3) 52%,rgba(0,0,0,.72)),linear-gradient(180deg,rgba(0,0,0,.36),transparent 35%,rgba(0,0,0,.78))}.plx-matrix{z-index:-4;width:100%;height:100%;opacity:.5;mix-blend-mode:screen}.plx-grain{z-index:30;pointer-events:none;opacity:.14;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.92' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");animation:plxgrain .2s steps(2) infinite}.plx-top{position:absolute;z-index:50;top:max(20px,env(safe-area-inset-top));left:clamp(18px,4vw,68px);right:clamp(18px,4vw,68px);display:flex;align-items:center;justify-content:space-between}.plx-brand{display:flex;align-items:center;gap:12px;text-transform:uppercase}.plx-brand img{width:42px;height:42px;object-fit:contain;filter:drop-shadow(0 0 18px rgba(231,185,78,.4))}.plx-brand span{display:grid;line-height:1}.plx-brand b{font-size:11px;letter-spacing:.2em}.plx-brand small{margin-top:6px;color:#e7b94e;font-size:7px;font-weight:950;letter-spacing:.24em}.plx-controls{display:flex;gap:8px}.plx-skip,.plx-mute{min-height:40px;border:1px solid rgba(255,255,255,.18);background:rgba(3,4,8,.58);color:#d7d9df;backdrop-filter:blur(12px);font:900 9px/1 inherit;letter-spacing:.13em;text-transform:uppercase}.plx-skip{padding:0 16px;border-radius:999px}.plx-mute{display:none;width:40px;border-radius:50%}.plx.started .plx-mute{display:block}.plx-stage{position:absolute;inset:0;z-index:12;display:grid;place-items:center;text-align:center;padding:24px}.plx-start{position:relative;width:min(1050px,94vw);display:grid;justify-items:center;transition:opacity .55s ease,transform .7s ease,filter .55s ease}.plx-start.hide{opacity:0;transform:scale(1.06);filter:blur(10px);pointer-events:none}.plx-over,.plx-scene p{margin:0 0 16px;color:#e7b94e;font-size:9px;font-weight:950;letter-spacing:.26em;text-transform:uppercase}.plx-start h1,.plx-scene h2{margin:0;font-size:clamp(48px,8vw,116px);font-weight:950;line-height:.86;letter-spacing:-.064em;text-transform:uppercase;text-wrap:balance;text-shadow:0 22px 70px rgba(0,0,0,.75)}.plx-start em,.plx-scene em{font-style:normal;color:transparent;background:linear-gradient(90deg,#fff6c9,#e7b94e);-webkit-background-clip:text;background-clip:text}.plx-start>span{margin-top:28px;padding:11px 16px;border:1px solid rgba(231,185,78,.46);border-radius:999px;background:rgba(5,6,9,.62);color:#fff0b0;font-size:9px;font-weight:950;letter-spacing:.17em;animation:plxprompt 1.35s ease-in-out infinite}.plx-orbit{position:absolute;left:50%;top:50%;z-index:-1;width:min(62vw,650px);aspect-ratio:1;transform:translate(-50%,-50%)}.plx-orbit i{position:absolute;inset:0;border:1px solid rgba(231,185,78,.14);border-radius:50%;animation:plxring 10s linear infinite}.plx-orbit i:nth-child(2){inset:18%;border-style:dashed;border-color:rgba(86,225,255,.2);animation-direction:reverse;animation-duration:15s}.plx-scenes{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none}.plx-scene{position:absolute;width:min(1120px,94vw);opacity:0;transform:translateY(30px) scale(.985);filter:blur(12px);transition:opacity .55s ease,transform .8s cubic-bezier(.16,.82,.2,1),filter .7s ease}.plx-scene.on{opacity:1;transform:none;filter:none}.plx-scene.past{opacity:0;transform:translateY(-35px) scale(1.02);filter:blur(10px)}.plx-final{display:grid;justify-items:center;gap:15px}.plx-final img{width:clamp(105px,14vw,175px);filter:drop-shadow(0 0 50px rgba(231,185,78,.45))}.plx-bills{z-index:8;pointer-events:none;perspective:1000px;overflow:hidden}.plx-bill{position:absolute;left:var(--left);top:-32vh;width:var(--w);padding:0;border:0;background:transparent;opacity:var(--o);filter:blur(var(--blur)) drop-shadow(0 18px 15px rgba(0,0,0,.55));transform-style:preserve-3d;pointer-events:auto;cursor:grab;animation:plxfall var(--dur) linear var(--delay) infinite;will-change:transform}.plx-bill span{position:relative;display:block;overflow:hidden;aspect-ratio:2.37;border-radius:3px;background:#d8d5c5;box-shadow:0 0 0 1px rgba(255,255,255,.2) inset;transform:rotateY(calc(var(--x)*-12deg)) rotateX(calc(var(--y)*9deg));transition:transform .15s ease}.plx-bill img{width:100%;height:100%;display:block;object-fit:cover;transform:scale(1.015);filter:saturate(.93) contrast(1.08) brightness(1.02);user-select:none;-webkit-user-drag:none}.plx-bill span:after{content:"";position:absolute;inset:-35%;background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,.3) 49%,transparent 58%);animation:plxglint 4.7s ease-in-out infinite;mix-blend-mode:screen}.plx-bill:hover{z-index:20;animation-play-state:paused;filter:drop-shadow(0 25px 22px rgba(0,0,0,.75)) drop-shadow(0 0 16px rgba(231,185,78,.32))}.plx-bill:hover span{transform:scale(1.12) rotateY(calc(var(--x)*-20deg)) rotateX(calc(var(--y)*14deg))}.plx-bill.caught{animation:plxcatch .85s ease-out forwards!important;filter:drop-shadow(0 0 35px rgba(231,185,78,.8))}.plx-footer{position:absolute;z-index:50;left:clamp(18px,4vw,68px);right:clamp(18px,4vw,68px);bottom:max(25px,calc(env(safe-area-inset-bottom) + 16px));display:grid;grid-template-columns:1fr auto 1fr;align-items:end;gap:18px;pointer-events:none}.plx-status{display:flex;align-items:center;gap:8px;color:#9a9faa;font-size:8px;font-weight:900;letter-spacing:.13em;text-transform:uppercase}.plx-status i{width:7px;height:7px;border-radius:50%;background:#e7b94e;box-shadow:0 0 13px rgba(231,185,78,.7);animation:plxpulse 1.2s ease-in-out infinite}.plx.sound .plx-status i{background:#6dffb7;box-shadow:0 0 14px rgba(109,255,183,.72)}.plx-caught{color:#9da2ad;font-size:8px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}.plx-caught b{margin-left:7px;color:#e7b94e;font-size:20px}.plx-time{justify-self:end;color:#6e737e;font-size:8px;font-weight:900}.plx-time b{color:#fff;font-size:22px}.plx-progress{position:absolute;z-index:60;left:0;right:0;bottom:0;height:3px;background:rgba(255,255,255,.05)}.plx-progress i{display:block;width:0;height:100%;background:linear-gradient(90deg,#e7b94e,#6ee7ff,#7a63ff);box-shadow:0 0 14px rgba(110,231,255,.45)}.plx-ripple{position:absolute;z-index:55;width:24px;height:24px;margin:-12px;border:1px solid rgba(231,185,78,.75);border-radius:50%;pointer-events:none;animation:plxripple .7s ease-out forwards}body.plx-active>header,body.plx-active>main,body.plx-active>footer{opacity:.01;filter:blur(5px);transform:scale(1.006)}body.plx-done>header,body.plx-done>main,body.plx-done>footer{animation:plxsite .9s ease both}@keyframes plxfall{0%{transform:translate3d(0,-20vh,calc(var(--d)*80px)) rotateX(0) rotateY(0) rotateZ(var(--r))}45%{transform:translate3d(calc(var(--drift)*.5),56vh,calc(var(--d)*90px)) rotateX(calc(var(--spin)*.35)) rotateY(calc(var(--spin)*-.2)) rotateZ(calc(var(--r) + var(--spin)*.44))}100%{transform:translate3d(var(--drift),145vh,calc(var(--d)*100px)) rotateX(var(--spin)) rotateY(calc(var(--spin)*-.62)) rotateZ(calc(var(--r) + var(--spin)*.76))}}@keyframes plxcatch{45%{transform:scale(1.55) rotateY(60deg) rotateZ(18deg);opacity:1}100%{transform:scale(.1) rotateY(260deg) rotateZ(260deg);opacity:0}}@keyframes plxglint{0%,62%{transform:translateX(-70%) rotate(8deg);opacity:0}72%{opacity:.75}100%{transform:translateX(70%) rotate(8deg);opacity:0}}@keyframes plxring{to{transform:rotate(360deg)}}@keyframes plxprompt{50%{transform:translateY(-3px);box-shadow:0 0 50px rgba(231,185,78,.22)}}@keyframes plxpulse{50%{opacity:.35;transform:scale(.78)}}@keyframes plxgrain{0%{transform:translate(0)}25%{transform:translate(-2%,1%)}50%{transform:translate(1%,-2%)}75%{transform:translate(2%,2%)}100%{transform:translate(-1%,-1%)}}@keyframes plxripple{to{width:340px;height:340px;margin:-170px;opacity:0}}@keyframes plxsite{0%{opacity:0;filter:blur(8px);transform:translateY(15px)}100%{opacity:1;filter:none;transform:none}}@media(max-width:720px){.plx-brand b{font-size:9px}.plx-brand small{font-size:6px}.plx-brand img{width:36px;height:36px}.plx-start h1,.plx-scene h2{font-size:clamp(44px,13vw,68px);line-height:.9}.plx-start>span{font-size:7px}.plx-bill{max-width:38vw}.plx-footer{grid-template-columns:1fr auto}.plx-caught{display:none}.plx-time{grid-column:2}.plx-final img{width:94px}}@media(prefers-reduced-motion:reduce){.plx-grain,.plx-orbit i,.plx-status i{animation:none!important}.plx-bg{transition:opacity .2s ease;transform:none!important}.plx-bill{animation-duration:16s!important}}
+  `;
 
-  safeSet('plvip_game_loaded', '1');
-  if (safeGet('plvip-intro-played') === '1' && !forceReplay) return;
+  const style = document.createElement('style');
+  style.id = 'plvip-intro-v6-style';
+  style.textContent = css;
+  document.head.appendChild(style);
 
-  const photos = [
-    'https://images.unsplash.com/photo-1771736007855-6cc95f244a85?auto=format&fit=crop&w=2200&q=84',
-    'https://images.unsplash.com/photo-1769029174090-f72261110697?auto=format&fit=crop&w=2200&q=84',
-    'https://images.unsplash.com/photo-1582112742477-85ec4c227ec5?auto=format&fit=crop&w=2200&q=84'
-  ];
+  const bills = Array.from({length:BILL_COUNT}, (_,i) => {
+    const depth = .5 + Math.random() * .9;
+    const dur = 6.2 + (1.4 - depth) * 5 + Math.random() * 3.5;
+    return `<button class="plx-bill" type="button" data-bill="${i}" style="--left:${-6+Math.random()*112}%;--w:${Math.round(140+depth*130)}px;--dur:${dur}s;--delay:${-Math.random()*dur}s;--drift:${-190+Math.random()*380}px;--r:${-55+Math.random()*110}deg;--spin:${(Math.random()>.5?1:-1)*(160+Math.random()*340)}deg;--d:${depth};--blur:${Math.max(0,(1.05-depth)*2.2)}px;--o:${Math.min(1,.52+depth*.36)}"><span><img src="${i%4===0?BACK:FRONT}" alt="" draggable="false" referrerpolicy="no-referrer"></span></button>`;
+  }).join('');
 
-  const intro = document.createElement('div');
-  intro.className = 'plvip-film';
-  intro.setAttribute('role', 'dialog');
-  intro.setAttribute('aria-modal', 'true');
-  intro.setAttribute('aria-label', 'Players League VIP interactive cinematic introduction');
-  intro.innerHTML = `
-    <canvas class="plvip-film__matrix" aria-hidden="true"></canvas>
-    <div class="plvip-film__photos" aria-hidden="true">
-      ${photos.map((url, index) => `<div class="plvip-film__photo p${index + 1}" style="background-image:url('${url}')"></div>`).join('')}
-    </div>
-    <div class="plvip-film__shade" aria-hidden="true"></div>
-    <div class="plvip-film__grain" aria-hidden="true"></div>
-    <div class="plvip-film__cash" data-cash aria-hidden="true"></div>
-
-    <header class="plvip-film__top">
-      <div class="plvip-film__brand"><img src="assets/plvip-logo.png" alt=""><span><b>PLAYERS LEAGUE</b><small>VIP // FOUNDING SEASON</small></span></div>
-      <button type="button" class="plvip-film__skip" data-skip>SKIP</button>
-    </header>
-
-    <main class="plvip-film__stage">
-      <section class="plvip-film__scene is-active" data-scene="0">
-        <p>THE OLD PATH</p>
-        <h1>ESCAPE<br><em>THE GRIND.</em></h1>
-        <span>Stop living on somebody else's scoreboard.</span>
-      </section>
-      <section class="plvip-film__scene" data-scene="1">
-        <p>THE NEXT MOVE</p>
-        <h1>BUILD YOUR<br><em>OWN FUTURE.</em></h1>
-        <span>Freedom starts with what you choose to build.</span>
-      </section>
-      <section class="plvip-film__scene" data-scene="2">
-        <p>THE QUESTION</p>
-        <h1>WHAT IS THE<br><em>MEANING OF PLAY?</em></h1>
-      </section>
-      <section class="plvip-film__scene" data-scene="3">
-        <p>MORE THAN A NUMBER</p>
-        <h1>A SCORE?<br>A WIN?<br><em>A LEGACY?</em></h1>
-      </section>
-      <section class="plvip-film__scene plvip-film__scene--final" data-scene="4">
-        <img src="assets/plvip-logo.png" alt="Players League VIP">
-        <p>LEAGUE // ONLINE</p>
-        <h1>PLAYERS LEAGUE VIP</h1>
-        <span>YOUR GAME. YOUR LEAGUE. YOUR LEGACY.</span>
-      </section>
+  const root = document.createElement('section');
+  root.className = 'plx';
+  root.setAttribute('role','dialog');
+  root.setAttribute('aria-modal','true');
+  root.setAttribute('aria-label','Players League VIP interactive cinematic introduction');
+  root.innerHTML = `
+    <div class="plx-bg on" data-bg="0" style="background-image:url('${CASH}')"></div>
+    <div class="plx-bg" data-bg="1" style="background-image:url('${CITY}')"></div>
+    <div class="plx-bg" data-bg="2" style="background-image:url('${GAME}')"></div>
+    <canvas class="plx-matrix" aria-hidden="true"></canvas><div class="plx-shade"></div><div class="plx-grain"></div>
+    <div class="plx-bills">${bills}</div>
+    <header class="plx-top"><div class="plx-brand"><img src="assets/plvip-logo.png" alt=""><span><b>Players League</b><small>VIP // Founding Season</small></span></div><div class="plx-controls"><button class="plx-mute" type="button" aria-label="Mute intro">◖</button><button class="plx-skip" type="button">Skip</button></div></header>
+    <main class="plx-stage">
+      <section class="plx-start"><p class="plx-over">INTERACTIVE CINEMATIC // SOUND STARTS ON CLICK</p><h1>Click anywhere<br><em>to break the loop.</em></h1><span>CLICK / TAP TO START</span><div class="plx-orbit"><i></i><i></i></div></section>
+      <div class="plx-scenes" aria-live="polite">
+        <article class="plx-scene" data-scene="0"><p>THE ROUTINE DOES NOT DEFINE YOU</p><h2>Break<br><em>the routine.</em></h2></article>
+        <article class="plx-scene" data-scene="1"><p>FREEDOM IS BUILT — NEVER PROMISED</p><h2>Build your<br><em>own path.</em></h2></article>
+        <article class="plx-scene" data-scene="2"><p>ONE GLOBAL PLAYER IDENTITY</p><h2>What does<br><em>winning mean?</em></h2></article>
+        <article class="plx-scene" data-scene="3"><p>YOUR PROGRESS SHOULD FOLLOW YOU</p><h2>A score. A rank.<br><em>A legacy.</em></h2></article>
+        <article class="plx-scene plx-final" data-scene="4"><img src="assets/plvip-logo.png" alt="Players League VIP"><h2>Players League VIP</h2><p>PLAY. COMPETE. RISE.</p></article>
+      </div>
     </main>
+    <footer class="plx-footer"><div class="plx-status"><i></i><span>MOVE YOUR CURSOR // CLICK TO START</span></div><div class="plx-caught">Caught <b>0</b></div><div class="plx-time"><b>00</b> / 18</div></footer><div class="plx-progress"><i></i></div>`;
 
-    <aside class="plvip-film__rail" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></aside>
-    <footer class="plvip-film__footer">
-      <div class="plvip-film__sound"><i></i><span data-sound-status>CONNECTING AUDIO</span></div>
-      <div class="plvip-film__hint" data-hint>MOVE YOUR CURSOR</div>
-      <div class="plvip-film__time"><b data-time>00</b><span>/16</span></div>
-    </footer>
-    <div class="plvip-film__progress"><i data-progress></i></div>`;
-
-  document.body.prepend(intro);
-  document.body.classList.add('plvip-intro-active');
+  document.body.prepend(root);
+  document.body.classList.add('plx-active');
   document.documentElement.style.overflow = 'hidden';
 
-  const canvas = intro.querySelector('.plvip-film__matrix');
-  const ctx2d = canvas.getContext('2d');
-  const cashLayer = intro.querySelector('[data-cash]');
-  const scenes = [...intro.querySelectorAll('[data-scene]')];
-  const rail = [...intro.querySelectorAll('.plvip-film__rail i')];
-  const timeEl = intro.querySelector('[data-time]');
-  const soundStatus = intro.querySelector('[data-sound-status]');
-  const hint = intro.querySelector('[data-hint]');
-  const progress = intro.querySelector('[data-progress]');
-  const skip = intro.querySelector('[data-skip]');
+  const start = root.querySelector('.plx-start');
+  const scenes = [...root.querySelectorAll('[data-scene]')];
+  const backgrounds = [...root.querySelectorAll('[data-bg]')];
+  const billNodes = [...root.querySelectorAll('[data-bill]')];
+  const status = root.querySelector('.plx-status span');
+  const caughtNode = root.querySelector('.plx-caught b');
+  const timeNode = root.querySelector('.plx-time b');
+  const progress = root.querySelector('.plx-progress i');
+  const skip = root.querySelector('.plx-skip');
+  const mute = root.querySelector('.plx-mute');
+  const canvas = root.querySelector('.plx-matrix');
+  const ctx = canvas.getContext('2d');
+  let started=false, finished=false, muted=false, caught=0, startedAt=0, current=-1, raf=0, timer=0, audio=null, master=null;
+  let px=innerWidth/2, py=innerHeight/2, drops=[];
 
-  let finished = false;
-  let startedAt = performance.now();
-  let raf = 0;
-  let audioContext = null;
-  let master = null;
-  let soundStarted = false;
-  let matrixDrops = [];
-  let pointerX = 0;
-  let pointerY = 0;
+  const resize = () => { const d=Math.min(devicePixelRatio||1,2); canvas.width=Math.floor(innerWidth*d); canvas.height=Math.floor(innerHeight*d); canvas.style.width=innerWidth+'px'; canvas.style.height=innerHeight+'px'; ctx.setTransform(d,0,0,d,0,0); drops=Array.from({length:Math.ceil(innerWidth/27)},()=>-Math.random()*45); };
+  const matrix = () => { if(finished||reduced)return; ctx.fillStyle='rgba(1,3,6,.09)';ctx.fillRect(0,0,innerWidth,innerHeight);ctx.font='11px monospace';drops.forEach((v,i)=>{const x=i*27,y=v*22,near=1-Math.min(1,Math.hypot(x-px,y-py)/360);ctx.fillStyle=`rgba(${Math.round(72+near*160)},${Math.round(160+near*72)},${Math.round(118+near*100)},${.06+near*.28})`;ctx.fillText(Math.random()>.5?'1':'0',x,y);drops[i]=y>innerHeight&&Math.random()>.976?0:v+.42+near*.35});raf=requestAnimationFrame(matrix);};
 
-  const billCount = reducedMotion ? 8 : 24;
-  for (let i = 0; i < billCount; i += 1) {
-    const bill = document.createElement('i');
-    bill.className = 'plvip-film__bill';
-    bill.innerHTML = '<span>100</span><b>$</b><span>100</span>';
-    bill.style.setProperty('--x', `${(i * 41) % 106 - 3}%`);
-    bill.style.setProperty('--delay', `${-(i % 9) * 0.72}s`);
-    bill.style.setProperty('--dur', `${5.6 + (i % 7) * 0.55}s`);
-    bill.style.setProperty('--spin', `${-24 + (i % 8) * 9}deg`);
-    bill.style.setProperty('--scale', `${0.62 + (i % 5) * 0.13}`);
-    cashLayer.appendChild(bill);
-  }
+  const tone=(f,at,len,vol,type='sine',end=null,pan=0)=>{if(!audio||!master)return;const o=audio.createOscillator(),g=audio.createGain(),p=audio.createStereoPanner?audio.createStereoPanner():null;o.type=type;o.frequency.setValueAtTime(f,at);if(end)o.frequency.exponentialRampToValueAtTime(end,at+len);g.gain.setValueAtTime(.0001,at);g.gain.exponentialRampToValueAtTime(vol,at+.012);g.gain.exponentialRampToValueAtTime(.0001,at+len);if(p){p.pan.value=pan;o.connect(g).connect(p).connect(master)}else{o.connect(g).connect(master)}o.start(at);o.stop(at+len+.03)};
+  const noise=(at,len=.14,vol=.08,center=2100,pan=0)=>{if(!audio||!master)return;const b=audio.createBuffer(1,Math.floor(audio.sampleRate*len),audio.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,1.5);const s=audio.createBufferSource(),f=audio.createBiquadFilter(),g=audio.createGain(),p=audio.createStereoPanner?audio.createStereoPanner():null;s.buffer=b;f.type='bandpass';f.frequency.value=center;f.Q.value=.7;g.gain.setValueAtTime(vol,at);g.gain.exponentialRampToValueAtTime(.0001,at+len);if(p){p.pan.value=pan;s.connect(f).connect(g).connect(p).connect(master)}else{s.connect(f).connect(g).connect(master)}s.start(at)};
+  const sound=async()=>{const A=window.AudioContext||window.webkitAudioContext;if(!A)throw Error('WebAudio unavailable');audio=new A();master=audio.createGain();const c=audio.createDynamicsCompressor();c.threshold.value=-22;c.knee.value=8;c.ratio.value=7;c.attack.value=.002;c.release.value=.2;master.gain.value=.9;master.connect(c).connect(audio.destination);await audio.resume();const t=audio.currentTime+.02;tone(350,t,.72,.19);tone(440,t,.72,.17);[[697,1209],[770,1336],[852,1477],[697,1336],[770,1209],[941,1336]].forEach(([a,b],i)=>{tone(a,t+.78+i*.13,.095,.19);tone(b,t+.78+i*.13,.095,.19)});tone(2100,t+1.72,.72,.24,'sine',1940);tone(1180,t+2.05,.74,.22,'sawtooth',2820,-.3);tone(2600,t+2.2,.65,.18,'triangle',980,.3);noise(t+2.8,.3,.13,2300);for(let i=0;i<62;i++){const at=t+3.05+i*.18,bank=[980,1180,1370,1650,1850,2100,2350,2680],base=bank[i%bank.length];tone(base,at,.12,.095+(i%4)*.008,i%3?'sawtooth':'square',base+(i%2?260:620),i%2?.58:-.58);if(i%3===0)noise(at+.045,.085,.05,1700+(i%5)*260,i%2?-.65:.65)}tone(440,t+14.8,2.1,.12,'sine',660);tone(660,t+14.9,2,.1,'triangle',990);tone(880,t+15,1.8,.07,'sine',1320);root.classList.add('sound');status.textContent='AUDIO ONLINE // CATCH A BILL'};
 
-  const resizeMatrix = () => {
-    const dpr = Math.min(2, window.devicePixelRatio || 1);
-    canvas.width = Math.floor(innerWidth * dpr);
-    canvas.height = Math.floor(innerHeight * dpr);
-    canvas.style.width = `${innerWidth}px`;
-    canvas.style.height = `${innerHeight}px`;
-    ctx2d.setTransform(dpr, 0, 0, dpr, 0, 0);
-    const cols = Math.ceil(innerWidth / 28);
-    matrixDrops = Array.from({ length: cols }, (_, i) => ((i * 67) % Math.max(innerHeight, 1)) / 28);
-  };
+  const setScene=i=>{if(i===current)return;current=i;scenes.forEach((s,n)=>{s.classList.toggle('on',n===i);s.classList.toggle('past',n<i)});backgrounds.forEach((b,n)=>b.classList.toggle('on',n===(i<2?i:2)))};
+  const sceneFor=e=>e<3400?0:e<6800?1:e<10200?2:e<13600?3:4;
+  const finish=()=>{if(finished)return;finished=true;clearInterval(timer);cancelAnimationFrame(raf);try{sessionStorage.setItem(key,'1')}catch(_){}root.classList.add('leave');document.body.classList.remove('plx-active');document.body.classList.add('plx-done');document.documentElement.style.overflow='';if(audio&&master){const n=audio.currentTime;master.gain.cancelScheduledValues(n);master.gain.setValueAtTime(Math.max(master.gain.value,.001),n);master.gain.exponentialRampToValueAtTime(.001,n+.45);setTimeout(()=>audio.close().catch(()=>{}),550)}setTimeout(()=>root.remove(),900)};
+  const run=()=>{if(started||finished)return;started=true;root.classList.add('started');start.classList.add('hide');startedAt=performance.now();status.textContent='CONNECTING AUDIO';sound().catch(()=>status.textContent='SOUND FAILED — CLICK SPEAKER');progress.style.transition=`width ${DURATION}ms linear`;requestAnimationFrame(()=>progress.style.width='100%');setScene(0);timer=setInterval(()=>{const e=performance.now()-startedAt;timeNode.textContent=String(Math.min(18,Math.floor(e/1000))).padStart(2,'0');setScene(sceneFor(e));if(e>=DURATION)finish()},80)};
+  const clickBill=(bill,e)=>{if(!started){run();return}if(bill.classList.contains('caught'))return;e.stopPropagation();bill.classList.add('caught');caught++;caughtNode.textContent=String(caught);if(audio&&!muted){const n=audio.currentTime;tone(760,n,.16,.07,'sine',1160);tone(1120,n+.05,.18,.06,'triangle',1500)}setTimeout(()=>bill.classList.remove('caught'),950)};
 
-  const drawMatrix = () => {
-    if (!ctx2d || reducedMotion || finished) return;
-    ctx2d.fillStyle = 'rgba(1,3,7,.09)';
-    ctx2d.fillRect(0, 0, innerWidth, innerHeight);
-    ctx2d.font = '11px monospace';
-    for (let i = 0; i < matrixDrops.length; i += 1) {
-      const x = i * 28;
-      const y = matrixDrops[i] * 28;
-      const char = Math.random() > .5 ? String.fromCharCode(0x30A0 + Math.random() * 70) : String(Math.floor(Math.random() * 10));
-      const distance = Math.hypot(x - (pointerX + .5) * innerWidth, y - (pointerY + .5) * innerHeight);
-      ctx2d.fillStyle = distance < 170 ? 'rgba(228,185,78,.48)' : 'rgba(65,255,154,.15)';
-      ctx2d.fillText(char, x, y);
-      matrixDrops[i] += .32 + (i % 4) * .04;
-      if (y > innerHeight && Math.random() > .975) matrixDrops[i] = 0;
-    }
-    raf = requestAnimationFrame(drawMatrix);
-  };
-
-  resizeMatrix();
-  window.addEventListener('resize', resizeMatrix, { passive: true });
-  if (!reducedMotion) drawMatrix();
-
-  const tone = (freq, at, length, gainValue, type = 'sine', end = null) => {
-    if (!audioContext || !master) return;
-    const osc = audioContext.createOscillator();
-    const gain = audioContext.createGain();
-    osc.type = type;
-    osc.frequency.setValueAtTime(freq, at);
-    if (end) osc.frequency.exponentialRampToValueAtTime(end, at + length);
-    gain.gain.setValueAtTime(.0001, at);
-    gain.gain.exponentialRampToValueAtTime(gainValue, at + .012);
-    gain.gain.exponentialRampToValueAtTime(.0001, at + length);
-    osc.connect(gain).connect(master);
-    osc.start(at);
-    osc.stop(at + length + .04);
-  };
-
-  const noise = (at, length = .16, gainValue = .11) => {
-    if (!audioContext || !master) return;
-    const buffer = audioContext.createBuffer(1, Math.floor(audioContext.sampleRate * length), audioContext.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < data.length; i += 1) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 1.8);
-    const source = audioContext.createBufferSource();
-    const filter = audioContext.createBiquadFilter();
-    const gain = audioContext.createGain();
-    source.buffer = buffer;
-    filter.type = 'bandpass';
-    filter.frequency.value = 2200;
-    filter.Q.value = .8;
-    gain.gain.setValueAtTime(gainValue, at);
-    gain.gain.exponentialRampToValueAtTime(.0001, at + length);
-    source.connect(filter).connect(gain).connect(master);
-    source.start(at);
-  };
-
-  const scheduleDialup = () => {
-    const t = audioContext.currentTime + .03;
-    tone(350, t, .72, .23); tone(440, t, .72, .20);
-    const digits = [[697,1209],[770,1336],[852,1477],[697,1336],[770,1209],[941,1336]];
-    digits.forEach(([a,b], i) => { tone(a,t+.8+i*.13,.09,.22); tone(b,t+.8+i*.13,.09,.22); });
-    tone(2100,t+2.0,.74,.28,'sine',1760);
-    tone(950,t+2.35,.8,.25,'sawtooth',2780);
-    noise(t+2.9,.28,.15);
-    for (let i = 0; i < 42; i += 1) {
-      const at = t + 3.2 + i * .19;
-      const base = [1070,1270,1650,1850,2200,2400][i % 6];
-      tone(base, at, .14, .16, i % 2 ? 'square' : 'sawtooth', base + 160 + (i % 3) * 220);
-      if (i % 4 === 0) noise(at+.05,.09,.07);
-    }
-    tone(760,t+11.2,1.5,.22,'triangle',1520);
-    tone(1200,t+12.0,1.35,.19,'sine',2400);
-    tone(620,t+13.5,2.0,.13,'sine',980);
-  };
-
-  const startSound = async () => {
-    if (soundStarted || finished) return true;
-    try {
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      if (!AudioCtx) return false;
-      if (!audioContext) {
-        audioContext = new AudioCtx();
-        master = audioContext.createGain();
-        const compressor = audioContext.createDynamicsCompressor();
-        compressor.threshold.value = -18;
-        compressor.ratio.value = 5;
-        master.gain.value = .72;
-        master.connect(compressor).connect(audioContext.destination);
-      }
-      await audioContext.resume();
-      if (audioContext.state !== 'running') return false;
-      soundStarted = true;
-      intro.classList.add('has-sound');
-      soundStatus.textContent = 'AUDIO ONLINE';
-      hint.textContent = 'MOVE YOUR CURSOR';
-      scheduleDialup();
-      return true;
-    } catch (_) {
-      return false;
-    }
-  };
-
-  const unlockSound = async () => {
-    if (await startSound()) {
-      window.removeEventListener('pointerdown', unlockSound);
-      window.removeEventListener('touchstart', unlockSound);
-      window.removeEventListener('keydown', unlockSound);
-    }
-  };
-
-  startSound().then((ok) => {
-    if (!ok) {
-      soundStatus.textContent = 'TAP ANYWHERE FOR SOUND';
-      hint.textContent = 'CLICK / TAP TO ACTIVATE';
-      window.addEventListener('pointerdown', unlockSound, { passive: true });
-      window.addEventListener('touchstart', unlockSound, { passive: true });
-      window.addEventListener('keydown', unlockSound);
-    }
-  });
-
-  const setScene = (index) => {
-    scenes.forEach((scene, i) => scene.classList.toggle('is-active', i === index));
-    rail.forEach((item, i) => item.classList.toggle('is-active', i === index));
-    intro.dataset.scene = String(index);
-  };
-
-  const sceneAt = (elapsed) => {
-    if (reducedMotion) return elapsed < 2200 ? 0 : elapsed < 4200 ? 2 : elapsed < 6200 ? 3 : 4;
-    if (elapsed < 3200) return 0;
-    if (elapsed < 6200) return 1;
-    if (elapsed < 9300) return 2;
-    if (elapsed < 12200) return 3;
-    return 4;
-  };
-
-  const tick = () => {
-    if (finished) return;
-    const elapsed = performance.now() - startedAt;
-    setScene(sceneAt(elapsed));
-    const sec = Math.min(Math.floor(elapsed / 1000), Math.floor(duration / 1000));
-    timeEl.textContent = String(sec).padStart(2, '0');
-    progress.style.width = `${Math.min(100, elapsed / duration * 100)}%`;
-    if (elapsed >= duration) finish();
-    else requestAnimationFrame(tick);
-  };
-
-  const finish = () => {
-    if (finished) return;
-    finished = true;
-    safeSet('plvip-intro-played','1');
-    intro.classList.add('is-leaving');
-    document.body.classList.remove('plvip-intro-active');
-    document.body.classList.add('plvip-intro-done');
-    document.documentElement.style.overflow = '';
-    cancelAnimationFrame(raf);
-    window.removeEventListener('resize', resizeMatrix);
-    window.removeEventListener('pointerdown', unlockSound);
-    window.removeEventListener('touchstart', unlockSound);
-    window.removeEventListener('keydown', unlockSound);
-    if (audioContext && audioContext.state !== 'closed') {
-      const now = audioContext.currentTime;
-      master.gain.cancelScheduledValues(now);
-      master.gain.setValueAtTime(Math.max(.0001, master.gain.value), now);
-      master.gain.exponentialRampToValueAtTime(.0001, now + .35);
-      setTimeout(() => audioContext.close().catch(() => {}), 450);
-    }
-    setTimeout(() => intro.remove(), 850);
-  };
-
-  skip.addEventListener('click', (event) => { event.stopPropagation(); finish(); });
-  intro.addEventListener('keydown', (event) => { if (event.key === 'Escape') finish(); });
-
-  if (!reducedMotion) {
-    intro.addEventListener('pointermove', (event) => {
-      pointerX = event.clientX / innerWidth - .5;
-      pointerY = event.clientY / innerHeight - .5;
-      intro.style.setProperty('--px', pointerX.toFixed(3));
-      intro.style.setProperty('--py', pointerY.toFixed(3));
-      intro.style.setProperty('--mx', `${event.clientX}px`);
-      intro.style.setProperty('--my', `${event.clientY}px`);
-    }, { passive: true });
-  }
-
-  requestAnimationFrame(tick);
+  billNodes.forEach(b=>b.addEventListener('click',e=>clickBill(b,e)));
+  root.addEventListener('pointermove',e=>{px=e.clientX;py=e.clientY;root.style.setProperty('--x',(e.clientX/innerWidth-.5).toFixed(4));root.style.setProperty('--y',(e.clientY/innerHeight-.5).toFixed(4));root.style.setProperty('--sx',e.clientX+'px');root.style.setProperty('--sy',e.clientY+'px')},{passive:true});
+  root.addEventListener('pointerdown',e=>{if(!started&&!e.target.closest('button'))run();if(started){const r=document.createElement('i');r.className='plx-ripple';r.style.left=e.clientX+'px';r.style.top=e.clientY+'px';root.appendChild(r);setTimeout(()=>r.remove(),720)}});
+  root.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&!started)run();if(e.key==='Escape')finish()});
+  mute.addEventListener('click',e=>{e.stopPropagation();muted=!muted;mute.textContent=muted?'×':'◖';if(master&&audio)master.gain.setTargetAtTime(muted?.0001:.9,audio.currentTime,.025)});
+  skip.addEventListener('click',e=>{e.stopPropagation();finish()});
+  addEventListener('resize',resize,{passive:true});
+  root.tabIndex=0;root.focus({preventScroll:true});resize();matrix();
 })();
